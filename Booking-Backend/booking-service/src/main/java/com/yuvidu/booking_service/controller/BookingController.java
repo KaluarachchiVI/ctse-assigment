@@ -48,7 +48,4 @@ public class BookingController {
         return "Booking cancelled successfully";
     }
 
-    
-    
-    
 }
