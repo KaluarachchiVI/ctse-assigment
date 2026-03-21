@@ -50,4 +50,13 @@ public class SeatService {
         seatRepository.save(seat);
         return true;
     }
+
+    // 5️⃣ Make selected seats unavailable
+    public void unavailableSelectedSeats(String scheduleId, List<String> seatNumbers) {
+        List<Seat> seats = seatRepository.findByScheduleIdAndSeatNumberIn(scheduleId, seatNumbers);
+        for (Seat seat : seats) {
+            seat.setAvailable(false);
+        }
+        seatRepository.saveAll(seats);
+    }
 }

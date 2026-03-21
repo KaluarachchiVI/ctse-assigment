@@ -41,4 +41,14 @@ public class SeatController {
             return ResponseEntity.badRequest().body("Seat already booked or not found.");
         }
     }
+
+    // Make multiple seats unavailable
+    @PostMapping("/unavailable")
+    public ResponseEntity<String> unavailableSeats(@RequestBody Map<String, Object> request) {
+        String scheduleId = (String) request.get("scheduleId");
+        List<String> seatNumbers = (List<String>) request.get("seatNumbers");
+
+        seatService.unavailableSelectedSeats(scheduleId, seatNumbers);
+        return ResponseEntity.ok("Selected seats marked as unavailable!");
+    }
 }

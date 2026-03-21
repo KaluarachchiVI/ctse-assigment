@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import com.praboth.scheduling_service.service.SeatService;
 
 @Service
 @RequiredArgsConstructor

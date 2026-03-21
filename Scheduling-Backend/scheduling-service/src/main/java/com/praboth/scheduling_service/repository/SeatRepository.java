@@ -13,4 +13,6 @@ public interface SeatRepository extends MongoRepository<Seat, String> {
     List<Seat> findByScheduleIdAndAvailable(String scheduleId, boolean available);
 
     Optional<Seat> findByScheduleIdAndSeatNumberAndAvailable(String scheduleId, String seatNumber, boolean available);
+
+    List<Seat> findByScheduleIdAndSeatNumberIn(String scheduleId, List<String> seatNumbers);
 }
