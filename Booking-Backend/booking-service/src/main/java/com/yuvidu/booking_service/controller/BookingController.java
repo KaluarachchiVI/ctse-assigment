@@ -1,12 +1,13 @@
 package com.yuvidu.booking_service.controller;
+
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import com.yuvidu.booking_service.service.BookingService;
 import com.yuvidu.booking_service.model.Bookingmodel;
 
-
 @RestController
 @RequestMapping("/booking")
+@CrossOrigin(origins = "http://localhost:5173")
 public class BookingController {
 
     private final BookingService bookingService;
@@ -30,7 +31,7 @@ public class BookingController {
         return bookingService.getBookingById(id);
     }
 
-     // Get bookings by user
+    // Get bookings by user
     @GetMapping("/user/{userId}")
     public List<Bookingmodel> getUserBookings(@PathVariable("userId") String userId) {
         return bookingService.getBookingsByUser(userId);
