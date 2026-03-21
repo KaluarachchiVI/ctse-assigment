@@ -21,6 +21,54 @@
   border: 1px solid var(--border);
 }
 
+.booking-table-shell {
+  padding: 0.5rem;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
+}
+
+.booking-refresh-btn {
+  font-weight: 600;
+}
+
+.booking-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-radius: 9999px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+}
+
+.booking-status--confirmed {
+  border-color: rgba(16, 185, 129, 0.45);
+  background: rgba(16, 185, 129, 0.1);
+  color: rgb(167 243 208);
+}
+
+.booking-status--cancelled {
+  border-color: rgba(248, 113, 113, 0.4);
+  background: rgba(239, 68, 68, 0.1);
+  color: rgb(254 202 202);
+}
+
+.booking-status--pending {
+  border-color: rgba(251, 191, 36, 0.4);
+  background: rgba(245, 158, 11, 0.1);
+  color: rgb(253 230 138);
+}
+
+.booking-status--default {
+  color: var(--text-muted);
+}
+
+.booking-btn-secondary {
+  border-color: rgba(148, 163, 184, 0.45);
+  color: #e2e8f0;
+}
+
 .table {
   width: 100%;
   border-collapse: collapse;

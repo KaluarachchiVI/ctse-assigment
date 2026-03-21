@@ -16,6 +16,7 @@ import CreateSchedule from './scheduling-frontend/pages/CreateSchedule';
 import AdminRoute from './admin-frontend/AdminRoute';
 import AdminLogin from './admin-frontend/pages/AdminLogin';
 import AdminDashboard from './admin-frontend/pages/AdminDashboard';
+import LandingPage from './components/LandingPage';
 import './App.css';
 
 function Navbar() {
@@ -25,7 +26,7 @@ function Navbar() {
         <NavLink to="/">MovieTickets</NavLink>
       </div>
       <div className="nav-links">
-        <NavLink to="/" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Home</NavLink>
+        <NavLink end to="/" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Home</NavLink>
         <NavLink to="/movies" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Movies</NavLink>
         <NavLink to="/schedules" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Schedules</NavLink>
         <NavLink to="/profile" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Profile</NavLink>
@@ -56,15 +57,16 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={
-          <div className="home-hero">
-            <h1>Book Your Favorite Movies</h1>
-            <p>Simple, fast, and secure ticket booking system.</p>
-            <div className="hero-actions">
-              <NavLink to="/register" className="cta-button">Get Started</NavLink>
+        <Route
+          path="/"
+          element={
+            <div className="app-container landing-root">
+              <Navbar />
+              <LandingPage />
+              <Footer />
             </div>
-          </div>
-        } />
+          }
+        />
 
         <Route path="/*" element={
           <div className="app-container">

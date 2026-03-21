@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { tmdbApi } from '../services/tmdbService';
@@ -137,7 +137,7 @@ export default function CreateMovie() {
             />
             <button 
               type="button" 
-              className="btn btn-secondary" 
+              className="btn btn-outline" 
               onClick={handleTmdbSearch}
               disabled={isSearching}
             >

@@ -31,7 +31,7 @@ export default function BookingList() {
     try {
       await bookingApi.updateBookingStatusAdmin(id, newStatus, authHeader());
       fetchBookings();
-    } catch (err) {
+    } catch {
       alert('Failed to update status.');
     }
   };
@@ -40,7 +40,7 @@ export default function BookingList() {
     try {
       await bookingApi.updateBookingStatusAdmin(id, 'CANCELLED', authHeader());
       fetchBookings();
-    } catch (err) {
+    } catch {
       alert('Failed to cancel booking.');
     }
   };
@@ -48,13 +48,13 @@ export default function BookingList() {
   const getStatusBadge = (status) => {
     switch (status?.toUpperCase()) {
       case 'CONFIRMED':
-        return <span className="badge badge-success">Confirmed</span>;
+        return <span className="booking-status booking-status--confirmed">Confirmed</span>;
       case 'CANCELLED':
-        return <span className="badge badge-danger">Cancelled</span>;
+        return <span className="booking-status booking-status--cancelled">Cancelled</span>;
       case 'PENDING':
-        return <span className="badge badge-warning">Pending</span>;
+        return <span className="booking-status booking-status--pending">Pending</span>;
       default:
-        return <span className="badge">{status}</span>;
+        return <span className="booking-status booking-status--default">{status}</span>;
     }
   };
 
@@ -76,14 +76,14 @@ export default function BookingList() {
           <h1 className="page-title">Manage Bookings</h1>
           <p className="page-description">Overview of all reservations (booking-service-late admin API).</p>
         </div>
-        <button type="button" onClick={fetchBookings} className="btn btn-outline">
+        <button type="button" onClick={fetchBookings} className="btn btn-outline booking-refresh-btn">
           Refresh List
         </button>
       </div>
 
       {error && <div className="status-message">{error}</div>}
 
-      <div className="table-wrapper">
+      <div className="table-wrapper booking-table-shell">
         {loading ? (
           <div className="loading-state">Loading bookings...</div>
         ) : bookings.length === 0 ? (
@@ -115,7 +115,7 @@ export default function BookingList() {
                       {booking.status !== 'CONFIRMED' && booking.status !== 'CANCELLED' && (
                         <button
                           type="button"
-                          className="btn btn-outline btn-action-sm"
+                          className="btn btn-outline btn-action-sm booking-btn-secondary"
                           onClick={() => handleUpdateStatus(booking.id, 'CONFIRMED')}
                         >
                           Confirm

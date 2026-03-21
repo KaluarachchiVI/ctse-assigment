@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { GlowingEffect } from '@/components/ui/glowing-effect';
+import { cn } from '@/lib/utils';
 import './MovieList.css';
 
 export default function MovieList() {
@@ -41,18 +43,30 @@ export default function MovieList() {
         <div className="movie-grid">
           {movies.map((movie) => (
             <Link key={movie.id} to={`/movies/${movie.id}`} className="movie-card-link">
-              <div className="card movie-card">
+              <div className="movie-card-outer group relative flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-border bg-card">
+                <GlowingEffect
+                  disabled={false}
+                  glow={false}
+                  spread={36}
+                  proximity={72}
+                  borderWidth={1}
+                  movementDuration={1.5}
+                />
                 {movie.posterUrl ? (
                   <img src={movie.posterUrl} alt={movie.title} className="movie-poster" />
                 ) : (
                   <div className="movie-poster-placeholder">🎬</div>
                 )}
-                
-                <div className="movie-content">
-                  <span className={`badge badge-status ${
-                    movie.status === 'NOW_SHOWING' ? 'badge-success' : 
-                    movie.status === 'COMING_SOON' ? 'badge-warning' : 'badge-danger'
-                  }`}>
+
+                <div className="movie-content relative z-10">
+                  <span
+                    className={cn(
+                      'movie-status-pill',
+                      movie.status === 'NOW_SHOWING' && 'movie-status-pill--showing',
+                      movie.status === 'COMING_SOON' && 'movie-status-pill--soon',
+                      movie.status === 'ENDED' && 'movie-status-pill--ended'
+                    )}
+                  >
                     {movie.status.replace('_', ' ')}
                   </span>
                   <h2 className="movie-card-title">{movie.title}</h2>
@@ -64,10 +78,8 @@ export default function MovieList() {
                     {movie.description?.length > 100 ? '...' : ''}
                   </p>
                   <div className="movie-footer">
-                    <span className="badge badge-warning">⭐ {movie.rating}/10</span>
-                    <span className="btn btn-outline" style={{ padding: '0.4rem 0.8rem', fontSize: '0.875rem' }}>
-                      Details
-                    </span>
+                    <span className="movie-rating-pill">⭐ {movie.rating}/10</span>
+                    <span className="movie-view-hint">View details →</span>
                   </div>
                 </div>
               </div>

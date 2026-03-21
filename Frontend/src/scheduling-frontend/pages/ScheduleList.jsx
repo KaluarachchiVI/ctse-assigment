@@ -3,6 +3,27 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import './ScheduleList.css';
 
+function formatScheduleDate(value) {
+  if (value == null || value === '') return '—';
+  try {
+    if (Array.isArray(value) && value.length >= 3) {
+      const [y, m, day] = value;
+      return new Date(y, m - 1, day).toLocaleDateString(undefined, {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      });
+    }
+    return new Date(value).toLocaleDateString(undefined, {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  } catch {
+    return String(value);
+  }
+}
+
 export default function ScheduleList() {
   const [schedules, setSchedules] = useState([]);
   const [movies, setMovies] = useState({});
@@ -60,7 +81,6 @@ export default function ScheduleList() {
                   <th>Price</th>
                   <th>Available Seats</th>
                   <th>Status</th>
-                  <th className="action-column">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -84,19 +104,20 @@ export default function ScheduleList() {
                         </div>
                       </td>
                       <td>{schedule.hallId}</td>
-                      <td>{new Date(schedule.date).toLocaleDateString()}</td>
+                      <td>{formatScheduleDate(schedule.date)}</td>
                       <td>{schedule.time}</td>
                       <td>${schedule.price.toFixed(2)}</td>
                       <td>{schedule.availableSeats}</td>
                       <td>
-                        <span className={`badge ${schedule.status === 'ACTIVE' ? 'badge-success' : 'badge-danger'}`}>
+                        <span
+                          className={
+                            schedule.status === 'ACTIVE'
+                              ? 'schedule-status schedule-status--active'
+                              : 'schedule-status schedule-status--inactive'
+                          }
+                        >
                           {schedule.status}
                         </span>
-                      </td>
-                      <td className="action-column">
-                        <button className="btn btn-outline" style={{ padding: '0.25rem 0.75rem', fontSize: '0.875rem' }}>
-                          Edit
-                        </button>
                       </td>
                     </tr>
                   );

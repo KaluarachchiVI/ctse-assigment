@@ -4,7 +4,23 @@
 }
 
 .form-card {
-  padding: 2.5rem;
+  padding: 2.75rem;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+}
+
+.movie-form-container .grid {
+  gap: 1.75rem 1.5rem;
+}
+
+.movie-form-container .form-group {
+  margin-bottom: 0;
+}
+
+.movie-form-container .form-input {
+  border-radius: 10px;
+  border-width: 1px;
 }
 
 .form-card-title {

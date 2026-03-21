@@ -1,7 +1,29 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { getGatewayBaseUrl } from '../../lib/gateway';
 import './MovieDetails.css';
+
+function formatShowingDate(value) {
+  if (value == null) return '';
+  try {
+    if (Array.isArray(value) && value.length >= 3) {
+      const [y, m, day] = value;
+      return new Date(y, m - 1, day).toLocaleDateString(undefined, {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      });
+    }
+    return new Date(value).toLocaleDateString(undefined, {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  } catch {
+    return String(value);
+  }
+}
 
 export default function MovieDetails() {
   const { id } = useParams();
@@ -15,9 +37,10 @@ export default function MovieDetails() {
   useEffect(() => {
     const fetchMovieData = async () => {
       try {
+        const base = getGatewayBaseUrl();
         const [movieRes, schedulesRes] = await Promise.all([
-          axios.get(`http://localhost:8087/movies/${id}`),
-          axios.get(`http://localhost:8087/schedules/movie/${id}`)
+          axios.get(`${base}/movies/${id}`),
+          axios.get(`${base}/schedules/movie/${id}`),
         ]);
         
         setMovie(movieRes.data);
@@ -35,7 +58,17 @@ export default function MovieDetails() {
 
   const filteredSchedules = useMemo(() => {
     if (!dateFilter) return schedules;
-    return schedules.filter(s => s.date === dateFilter);
+    return schedules.filter((s) => {
+      const d = s.date;
+      if (d == null) return false;
+      const key =
+        typeof d === 'string'
+          ? d.slice(0, 10)
+          : Array.isArray(d)
+            ? `${d[0]}-${String(d[1]).padStart(2, '0')}-${String(d[2]).padStart(2, '0')}`
+            : '';
+      return key === dateFilter;
+    });
   }, [schedules, dateFilter]);
 
   if (loading) return <div className="container">Loading movie details...</div>;
@@ -93,7 +126,7 @@ export default function MovieDetails() {
         </div>
       </div>
 
-      <div className="container main-content-grid">
+      <div className="container movie-details-main">
         <div className="content-left">
           {/* Cast Section */}
           {movie.castDetails && movie.castDetails.length > 0 && (
@@ -127,54 +160,68 @@ export default function MovieDetails() {
         </div>
 
         {/* Schedules Section */}
-        <div className="schedules-view" id="schedules">
-          <div className="schedules-section-header">
-            <div>
-              <h2 className="section-title" style={{ border: 'none', padding: 0 }}>Available Showings</h2>
-              <p className="text-muted">Pick a time to book your seats</p>
+        <section className="schedules-view" id="schedules" aria-labelledby="showings-heading">
+          <div className="schedules-panel">
+            <div className="schedules-section-header">
+              <div className="schedules-heading-block">
+                <h2 id="showings-heading" className="schedules-title">
+                  Available Showings
+                </h2>
+                <p className="schedules-subtitle">Pick a time to book your seats</p>
+              </div>
+              <div className="schedule-filter">
+                <label htmlFor="showing-date-filter" className="schedule-filter-label">
+                  Filter by date
+                </label>
+                <input
+                  id="showing-date-filter"
+                  type="date"
+                  className="form-input schedule-date-input"
+                  value={dateFilter}
+                  onChange={(e) => setDateFilter(e.target.value)}
+                />
+              </div>
             </div>
-            <div className="schedule-filter">
-              <label className="credit-label">Filter by Date</label>
-              <input 
-                type="date" 
-                className="form-input" 
-                style={{ width: '200px' }}
-                value={dateFilter}
-                onChange={(e) => setDateFilter(e.target.value)}
-              />
-            </div>
-          </div>
 
-          {filteredSchedules.length === 0 ? (
-            <div className="card text-center p-8" style={{ background: 'var(--surface-hover)' }}>
-              <p className="text-muted">No showings scheduled {dateFilter ? `for ${new Date(dateFilter).toLocaleDateString()}` : 'yet'}.</p>
-            </div>
-          ) : (
-            <div className="schedule-grid">
-              {filteredSchedules.map(schedule => (
-                <div key={schedule.id} className="schedule-card">
-                  <div className="schedule-card-header">
-                    <span className="hall-name">{schedule.hallId}</span>
-                    <span className="badge badge-outline">{new Date(schedule.date).toLocaleDateString()}</span>
-                  </div>
-                  <div className="schedule-time">{schedule.time}</div>
-                  <div className="schedule-card-footer">
-                    <div className="price-tag">
-                      <span className="text-muted text-xs block">Tickets from</span>
-                      <span className="text-main font-bold">${schedule.price.toFixed(2)}</span>
+            {filteredSchedules.length === 0 ? (
+              <div className="schedule-empty card">
+                <p className="text-muted">
+                  No showings scheduled{' '}
+                  {dateFilter
+                    ? `for ${new Date(dateFilter + 'T12:00:00').toLocaleDateString()}`
+                    : 'yet'}
+                  .
+                </p>
+              </div>
+            ) : (
+              <ul className="schedule-grid">
+                {filteredSchedules.map((schedule) => (
+                  <li key={schedule.id} className="schedule-card">
+                    <div className="schedule-card-top">
+                      <span className="hall-name">{schedule.hallId}</span>
+                      <time className="schedule-date-pill" dateTime={String(schedule.date)}>
+                        {formatShowingDate(schedule.date)}
+                      </time>
                     </div>
-                    <Link 
-                      to={`/bookings/new?scheduleId=${schedule.id}&movieId=${movie.id}`} 
-                      className="btn btn-primary btn-sm"
-                    >
-                      Book Now
-                    </Link>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+                    <div className="schedule-time">{schedule.time}</div>
+                    <div className="schedule-card-footer">
+                      <div className="price-tag">
+                        <span className="price-label">Tickets from</span>
+                        <span className="price-amount">${schedule.price.toFixed(2)}</span>
+                      </div>
+                      <Link
+                        to={`/bookings/new?scheduleId=${schedule.id}&movieId=${movie.id}`}
+                        className="btn btn-primary schedule-book-btn"
+                      >
+                        Book Now
+                      </Link>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </section>
       </div>
     </div>
   );

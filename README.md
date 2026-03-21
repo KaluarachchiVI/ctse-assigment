@@ -55,6 +55,8 @@ docker compose up -d --force-recreate payment-service
 
 ### 3. Frontend (Vite)
 
+The UI uses **Tailwind CSS** (with preflight disabled so existing global styles stay intact), **`motion`** (Framer Motion–compatible API) for the border glow, and **`clsx` / `tailwind-merge`** via `Frontend/src/lib/utils.js` (`cn` helper). Reusable primitives such as **`GlowingEffect`** live under **`Frontend/src/components/ui/`** (JSX port of the Aceternity-style glowing border, adapted for this Vite + JS app). The Vite config maps the **`@` alias** to **`Frontend/src`**.
+
 ```bash
 cd Frontend
 cp .env.example .env
@@ -68,6 +70,10 @@ npm run dev
 ```
 
 Open the URL Vite prints (often `http://localhost:5173`).
+
+### Quick setup (Windows)
+
+From the repo root you can run **`.\setup.ps1`** in PowerShell. It checks **Node**, optionally runs **`docker compose build`** / **`up -d`**, copies **`.env.example`** → **`.env`** if missing, then **`npm install`** and **`npm run build`** in **`Frontend/`**. Adjust **`.env`** and **`Frontend/.env`** before relying on payments or the gateway in production.
 
 ### 4. If something still fails
 
