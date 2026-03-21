@@ -43,36 +43,38 @@ export default function MovieList() {
       ) : (
         <div className="movie-grid">
           {movies.map((movie) => (
-            <div key={movie.id} className="card movie-card">
-              {movie.posterUrl ? (
-                <img src={movie.posterUrl} alt={movie.title} className="movie-poster" />
-              ) : (
-                <div className="movie-poster-placeholder">🎬</div>
-              )}
-              
-              <div className="movie-content">
-                <span className={`badge badge-status ${
-                  movie.status === 'NOW_SHOWING' ? 'badge-success' : 
-                  movie.status === 'COMING_SOON' ? 'badge-warning' : 'badge-danger'
-                }`}>
-                  {movie.status.replace('_', ' ')}
-                </span>
-                <h2 className="movie-card-title">{movie.title}</h2>
-                <div className="movie-meta">
-                  {movie.genre} &bull; {movie.language} &bull; {movie.duration} min
-                </div>
-                <p className="movie-description">
-                  {movie.description?.substring(0, 100)}
-                  {movie.description?.length > 100 ? '...' : ''}
-                </p>
-                <div className="movie-footer">
-                  <span className="badge badge-warning">⭐ {movie.rating}/10</span>
-                  <Link to={`/schedules/new?movieId=${movie.id}`} className="btn btn-outline" style={{ padding: '0.4rem 0.8rem', fontSize: '0.875rem' }}>
-                    Add Schedule
-                  </Link>
+            <Link key={movie.id} to={`/movies/${movie.id}`} className="movie-card-link">
+              <div className="card movie-card">
+                {movie.posterUrl ? (
+                  <img src={movie.posterUrl} alt={movie.title} className="movie-poster" />
+                ) : (
+                  <div className="movie-poster-placeholder">🎬</div>
+                )}
+                
+                <div className="movie-content">
+                  <span className={`badge badge-status ${
+                    movie.status === 'NOW_SHOWING' ? 'badge-success' : 
+                    movie.status === 'COMING_SOON' ? 'badge-warning' : 'badge-danger'
+                  }`}>
+                    {movie.status.replace('_', ' ')}
+                  </span>
+                  <h2 className="movie-card-title">{movie.title}</h2>
+                  <div className="movie-meta">
+                    {movie.genre} &bull; {movie.language} &bull; {movie.duration} min
+                  </div>
+                  <p className="movie-description">
+                    {movie.description?.substring(0, 100)}
+                    {movie.description?.length > 100 ? '...' : ''}
+                  </p>
+                  <div className="movie-footer">
+                    <span className="badge badge-warning">⭐ {movie.rating}/10</span>
+                    <span className="btn btn-outline" style={{ padding: '0.4rem 0.8rem', fontSize: '0.875rem' }}>
+                      Details
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       )}

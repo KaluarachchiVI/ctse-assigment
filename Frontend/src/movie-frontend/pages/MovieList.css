@@ -34,11 +34,31 @@
   }
 }
 
+.movie-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  height: 100%;
+}
+
 .movie-card {
   display: flex;
   flex-direction: column;
   padding: 0;
   overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.movie-card-link:hover .movie-card {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.5);
+  border-color: var(--primary);
+}
+
+.movie-card-link:hover .movie-card-title {
+  color: var(--primary);
 }
 
 .movie-poster-placeholder {

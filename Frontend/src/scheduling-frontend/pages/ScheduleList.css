@@ -53,3 +53,39 @@
 .action-column {
   text-align: right;
 }
+
+/* Movie Cell Enhancements */
+.movie-cell {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.mini-poster {
+  width: 40px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 4px;
+  background-color: var(--surface);
+}
+
+.movie-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.movie-link-title {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+
+.movie-link-title:hover {
+  text-decoration: underline;
+}
+
+.movie-link-genre {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}

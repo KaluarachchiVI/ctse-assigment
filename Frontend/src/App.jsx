@@ -7,6 +7,7 @@ import BookingList from './booking-frontend/pages/BookingList';
 import CreateBooking from './booking-frontend/pages/CreateBooking';
 import UserBookings from './booking-frontend/pages/UserBookings';
 import MovieList from './movie-frontend/pages/MovieList';
+import MovieDetails from './movie-frontend/pages/MovieDetails';
 import CreateMovie from './movie-frontend/pages/CreateMovie';
 import ScheduleList from './scheduling-frontend/pages/ScheduleList';
 import CreateSchedule from './scheduling-frontend/pages/CreateSchedule';
@@ -52,6 +53,7 @@ function App() {
             } />
             <Route path="/bookinghome" element={<Home />} />
             <Route path="/movies" element={<MovieList />} />
+            <Route path="/movies/:id" element={<MovieDetails />} />
             <Route path="/movies/new" element={<CreateMovie />} />
             <Route path="/schedules" element={<ScheduleList />} />
             <Route path="/schedules/new" element={<CreateSchedule />} />

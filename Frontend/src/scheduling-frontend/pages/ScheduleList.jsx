@@ -5,23 +5,35 @@ import './ScheduleList.css';
 
 export default function ScheduleList() {
   const [schedules, setSchedules] = useState([]);
+  const [movies, setMovies] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const fetchSchedules = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:8087/schedules');
-        setSchedules(response.data);
+        const [schedulesRes, moviesRes] = await Promise.all([
+          axios.get('http://localhost:8087/schedules'),
+          axios.get('http://localhost:8087/movies')
+        ]);
+        
+        setSchedules(schedulesRes.data);
+        
+        // Map movies by ID for easy lookup
+        const movieMap = {};
+        moviesRes.data.forEach(movie => {
+          movieMap[movie.id] = movie;
+        });
+        setMovies(movieMap);
       } catch (err) {
-        console.error('Failed to fetch schedules', err);
-        setError('Failed to load schedules. Please try again later.');
+        console.error('Failed to fetch data', err);
+        setError('Failed to load schedule data. Please try again later.');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchSchedules();
+    fetchData();
   }, []);
 
   if (loading) return <div className="container">Loading schedules...</div>;
@@ -44,7 +56,7 @@ export default function ScheduleList() {
             <table className="schedule-table">
               <thead>
                 <tr>
-                  <th>Movie ID</th>
+                  <th>Movie</th>
                   <th>Hall</th>
                   <th>Date</th>
                   <th>Time</th>
@@ -55,30 +67,43 @@ export default function ScheduleList() {
                 </tr>
               </thead>
               <tbody>
-                {schedules.map((schedule) => (
-                  <tr key={schedule.id}>
-                    <td>
-                      <Link to={`/movies`} style={{ color: 'var(--primary)', textDecoration: 'none' }}>
-                        {schedule.movieId.substring(0, 8)}...
-                      </Link>
-                    </td>
-                    <td>{schedule.hallId}</td>
-                    <td>{new Date(schedule.date).toLocaleDateString()}</td>
-                    <td>{schedule.time}</td>
-                    <td>${schedule.price.toFixed(2)}</td>
-                    <td>{schedule.availableSeats}</td>
-                    <td>
-                      <span className={`badge ${schedule.status === 'ACTIVE' ? 'badge-success' : 'badge-danger'}`}>
-                        {schedule.status}
-                      </span>
-                    </td>
-                    <td className="action-column">
-                      <button className="btn btn-outline" style={{ padding: '0.25rem 0.75rem', fontSize: '0.875rem' }}>
-                        Edit
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {schedules.map((schedule) => {
+                  const movie = movies[schedule.movieId];
+                  return (
+                    <tr key={schedule.id}>
+                      <td>
+                        <div className="movie-cell">
+                          <img 
+                            src={movie?.posterUrl || 'https://via.placeholder.com/40x60?text=N/A'} 
+                            alt={movie?.title} 
+                            className="mini-poster"
+                          />
+                          <div className="movie-info">
+                            <Link to="/movies" className="movie-link-title">
+                              {movie?.title || `ID: ${schedule.movieId.substring(0, 8)}...`}
+                            </Link>
+                            <span className="movie-link-genre">{movie?.genre || 'N/A'}</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td>{schedule.hallId}</td>
+                      <td>{new Date(schedule.date).toLocaleDateString()}</td>
+                      <td>{schedule.time}</td>
+                      <td>${schedule.price.toFixed(2)}</td>
+                      <td>{schedule.availableSeats}</td>
+                      <td>
+                        <span className={`badge ${schedule.status === 'ACTIVE' ? 'badge-success' : 'badge-danger'}`}>
+                          {schedule.status}
+                        </span>
+                      </td>
+                      <td className="action-column">
+                        <button className="btn btn-outline" style={{ padding: '0.25rem 0.75rem', fontSize: '0.875rem' }}>
+                          Edit
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
