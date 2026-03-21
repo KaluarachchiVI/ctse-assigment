@@ -5,7 +5,7 @@ import com.yuvidu.booking_service.service.BookingService;
 import com.yuvidu.booking_service.model.Bookingmodel;
 
 
-
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/booking")
 public class BookingController {
@@ -21,31 +21,30 @@ public class BookingController {
         return bookingService.createBooking(booking);
     }
 
-    @GetMapping("/{id}")
-    public Bookingmodel getBooking(@PathVariable String id) {
-        return bookingService.getBookingById(id);
-    }
-
-     // Get bookings by user
-    @GetMapping("/user/{userId}")
-    public List<Bookingmodel> getUserBookings(@PathVariable String userId) {
-        return bookingService.getBookingsByUser(userId);
-    }
-    
     @GetMapping
     public List<Bookingmodel> getBookings() {
         return bookingService.getAllBookings();
     }
 
+    @GetMapping("/{id}")
+    public Bookingmodel getBooking(@PathVariable("id") String id) {
+        return bookingService.getBookingById(id);
+    }
+
+     // Get bookings by user
+    @GetMapping("/user/{userId}")
+    public List<Bookingmodel> getUserBookings(@PathVariable("userId") String userId) {
+        return bookingService.getBookingsByUser(userId);
+    }
+
     @PutMapping("/{id}/status")
-    public Bookingmodel updateBookingStatus(@PathVariable String id, @RequestParam String status) {
+    public Bookingmodel updateBookingStatus(@PathVariable("id") String id, @RequestParam("status") String status) {
         return bookingService.updateBookingStatus(id, status);
     }
 
     @PutMapping("/{id}/cancel")
-    public String cancelBooking(@PathVariable String id) {
-        bookingService.cancelBooking(id);
-        return "Booking cancelled successfully";
+    public Bookingmodel cancelBooking(@PathVariable("id") String id) {
+        return bookingService.cancelBooking(id);
     }
 
 }

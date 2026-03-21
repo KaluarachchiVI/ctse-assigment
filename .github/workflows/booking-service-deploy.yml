@@ -1,0 +1,60 @@
+name: Deploy Booking Service to Azure Container Apps
+
+on:
+  push:
+    branches:
+      - yuvidu-deploy-service-backend
+    paths:
+      - 'Booking-Backend/booking-service/**'
+      - '.github/workflows/booking-service-deploy.yml'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Docker login to ACR
+        uses: azure/docker-login@v1
+        with:
+          login-server: bookingacrsliitproject.azurecr.io
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Build and Push Docker image
+        run: |
+          cd Booking-Backend/booking-service
+          docker build -t bookingacrsliitproject.azurecr.io/booking-service:${{ github.sha }} .
+          docker tag bookingacrsliitproject.azurecr.io/booking-service:${{ github.sha }} bookingacrsliitproject.azurecr.io/booking-service:latest
+          docker push bookingacrsliitproject.azurecr.io/booking-service:${{ github.sha }}
+          docker push bookingacrsliitproject.azurecr.io/booking-service:latest
+
+      - name: Update Container App via Azure REST API
+        run: |
+          # Get access token using ACR credentials via Azure REST API
+          TOKEN=$(curl -s -X POST \
+            "https://login.microsoftonline.com/44e3cf94-19c9-4e32-96c3-14f5bf01391a/oauth2/v2.0/token" \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            -d "grant_type=password" \
+            -d "client_id=04b07795-8542-4an9-b09b-6b7e5d5f2c09" \
+            -d "username=${{ secrets.AZURE_USER }}" \
+            -d "password=${{ secrets.AZURE_PASS }}" \
+            -d "scope=https://management.azure.com/.default" | jq -r '.access_token')
+
+          # Update container app with new image
+          curl -s -X PATCH \
+            "https://management.azure.com/subscriptions/a143c3ef-cbec-477a-bc1b-15a17534b258/resourceGroups/booking-rg/providers/Microsoft.App/containerApps/booking-service-app?api-version=2023-05-01" \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "properties": {
+                "template": {
+                  "containers": [{
+                    "name": "booking-service",
+                    "image": "bookingacrsliitproject.azurecr.io/booking-service:${{ github.sha }}"
+                  }]
+                }
+              }
+            }'

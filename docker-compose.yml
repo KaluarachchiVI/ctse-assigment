@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build:
+      context: ./Gateway/api-gateway
+    ports:
+      - "8087:8087"
+    environment:
+      - USER_SERVICE_URL=http://user-service:8081
+      - BOOKING_SERVICE_URL=http://booking-service:8082
+      - MOVIE_SERVICE_URL=http://movie-service:8083
+      - SCHEDULING_SERVICE_URL=http://scheduling-service:8084
+    depends_on:
+      - user-service
+      - booking-service
+      - movie-service
+      - scheduling-service
+
+  user-service:
+    build:
+      context: ./User-Backend/user-service
+    ports:
+      - "8081:8081"
+    environment:
+      - SERVER_PORT=8081
+      - SPRING_DATA_MONGODB_URI=mongodb+srv://yuvidu:yuvidu@cluster1.kt7i4.mongodb.net/microservice?retryWrites=true&w=majority&appName=Cluster1
+      - BOOKING_SERVICE_URL=http://booking-service:8082
+      - JWT_SECRET=404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+
+  booking-service:
+    build:
+      context: ./Booking-Backend/booking-service
+    ports:
+      - "8082:8082"
+    environment:
+      - SERVER_PORT=8082
+      - SPRING_DATA_MONGODB_URI=mongodb+srv://yuvidu:yuvidu@cluster1.kt7i4.mongodb.net/microservice?retryWrites=true&w=majority&appName=Cluster1
+
+  movie-service:
+    build:
+      context: ./Movie-Backend/movie-service
+    ports:
+      - "8083:8083"
+    environment:
+      - SERVER_PORT=8083
+      - SPRING_DATA_MONGODB_URI=mongodb+srv://yuvidu:yuvidu@cluster1.kt7i4.mongodb.net/microservice?retryWrites=true&w=majority&appName=Cluster1
+
+  scheduling-service:
+    build:
+      context: ./Scheduling-Backend/scheduling-service
+    ports:
+      - "8084:8084"
+    environment:
+      - SERVER_PORT=8084
+      - SPRING_DATA_MONGODB_URI=mongodb+srv://yuvidu:yuvidu@cluster1.kt7i4.mongodb.net/microservice?retryWrites=true&w=majority&appName=Cluster1

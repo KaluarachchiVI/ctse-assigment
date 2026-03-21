@@ -1,121 +1,66 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { BrowserRouter as Router, Routes, Route, NavLink, Navigate } from 'react-router-dom';
+import Login from './user-frontend/pages/Login';
+import Register from './user-frontend/pages/Register';
+import Profile from './user-frontend/pages/Profile';
+import Home from './booking-frontend/pages/Home';
+import BookingList from './booking-frontend/pages/BookingList';
+import CreateBooking from './booking-frontend/pages/CreateBooking';
+import UserBookings from './booking-frontend/pages/UserBookings';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <Router>
+      <div className="app-container">
+        <nav className="navbar">
+          <div className="nav-brand">
+            <NavLink to="/">MovieTickets</NavLink>
+          </div>
+          <div className="nav-links">
+            <NavLink to="/" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Home</NavLink>
+            <NavLink to="/bookings/manage" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Manage Bookings</NavLink>
+            <NavLink to="/profile" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Profile</NavLink>
+          </div>
+          <div className="nav-auth">
+            {!localStorage.getItem('token') ? (
+              <>
+                <NavLink to="/login" className="auth-btn login-btn">Login</NavLink>
+                <NavLink to="/register" className="auth-btn register-btn">Register</NavLink>
+              </>
+            ) : (
+              <NavLink to="/profile" className="auth-btn profile-btn">My Dashboard</NavLink>
+            )}
+          </div>
+        </nav>
 
-      <div className="ticks"></div>
+        <main className="main-content">
+          <Routes>
+            <Route path="/" element={
+              <div className="home-hero">
+                <h1>Book Your Favorite Movies</h1>
+                <p>Simple, fast, and secure ticket booking system.</p>
+                <div className="hero-actions">
+                  <NavLink to="/register" className="cta-button">Get Started</NavLink>
+                </div>
+              </div>
+            } />
+            <Route path="/bookinghome" element={<Home />} />
+            <Route path="/bookings/new" element={<CreateBooking />} />
+            <Route path="/bookings/manage" element={<BookingList />} />
+            <Route path="/bookings/user/:userId" element={<UserBookings />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        </main>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+        <footer className="footer">
+          <p>&copy; 2026 MovieTickets Inc. All rights reserved.</p>
+        </footer>
+      </div>
+    </Router>
+  );
 }
 
-export default App
+export default App;

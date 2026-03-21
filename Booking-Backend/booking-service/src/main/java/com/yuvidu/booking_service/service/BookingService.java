@@ -1,4 +1,5 @@
 package com.yuvidu.booking_service.service;
+
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,12 +20,13 @@ public class BookingService {
         // if seat is not available, throw exception
         // if seat is available, create booking
         // validate user exists
-        booking.setStatus("PENDING");  
-        booking.setCreatedAt(LocalDateTime.now());     
+        booking.setStatus("PENDING");
+        booking.setCreatedAt(LocalDateTime.now());
         return bookingRepository.save(booking);
     }
 
     public Bookingmodel getBookingById(String id) {
+        System.out.println("Processing getBookingById for ID: [" + id + "] Length: " + (id != null ? id.length() : 0));
         return bookingRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Booking not found for that id: " + id));
     }
@@ -49,5 +51,4 @@ public class BookingService {
         return bookingRepository.findByUserId(userId);
     }
 
-    
 }

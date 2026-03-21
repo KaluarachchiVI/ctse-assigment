@@ -1,0 +1,57 @@
+# Root .gitignore to cover all sub-projects
+
+# Compiled class files
+**/target/
+**/build/
+**/bin/
+
+# Log files
+*.log
+**/logs/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# virtual machine crash logs, see http://www.oracle.com/technetwork/java/javase/community/error-report-136909.html
+hs_err_pid*
+
+# Maven
+.mvn/
+mvnw
+mvnw.cmd
+
+# IDEs
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.classpath
+.project
+.settings/
+.factorypath
+.springBeans
+.sts4-cache
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# Node (Frontend)
+**/node_modules/
+**/dist/
+.eslintcache
+
+# Env
+.env
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db
