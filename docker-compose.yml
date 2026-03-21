@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   api-gateway:
     build:
@@ -11,11 +9,13 @@ services:
       - BOOKING_SERVICE_URL=http://booking-service:8082
       - MOVIE_SERVICE_URL=http://movie-service:8083
       - SCHEDULING_SERVICE_URL=http://scheduling-service:8084
+      - PAYMENT_SERVICE_URL=http://payment-service:8085
     depends_on:
       - user-service
       - booking-service
       - movie-service
       - scheduling-service
+      - payment-service
 
   user-service:
     build:
@@ -30,12 +30,33 @@ services:
 
   booking-service:
     build:
-      context: ./Booking-Backend/booking-service
+      context: ./booking-service-late
     ports:
       - "8082:8082"
     environment:
       - SERVER_PORT=8082
-      - SPRING_DATA_MONGODB_URI=mongodb+srv://yuvidu:yuvidu@cluster1.kt7i4.mongodb.net/microservice?retryWrites=true&w=majority&appName=Cluster1
+      - MONGO_URI=mongodb+srv://yuvidu:yuvidu@cluster1.kt7i4.mongodb.net/microservice?retryWrites=true&w=majority&appName=Cluster1
+      - JWT_SECRET=404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+      - BOOKING_ADMIN_USERNAME=admin
+      - BOOKING_ADMIN_PASSWORD=admin-pass
+
+  payment-service:
+    build:
+      context: ./payment-service
+    ports:
+      - "8085:8085"
+    environment:
+      - SERVER_PORT=8085
+      - MONGODB_URI=mongodb+srv://yuvidu:yuvidu@cluster1.kt7i4.mongodb.net/microservice?retryWrites=true&w=majority&appName=Cluster1
+      - BOOKING_SERVICE_BASE_URL=http://booking-service:8082
+      - USER_SERVICE_BASE_URL=http://user-service:8081
+      - BOOKING_ADMIN_USERNAME=admin
+      - BOOKING_ADMIN_PASSWORD=admin-pass
+      - PAYMENT_GATEWAY_PROVIDER=${PAYMENT_GATEWAY_PROVIDER:-stripe-checkout}
+      - STRIPE_API_KEY=${STRIPE_API_KEY:-}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET:-}
+      - STRIPE_CHECKOUT_CURRENCY=${STRIPE_CHECKOUT_CURRENCY:-usd}
+      - USER_SERVICE_ENABLED=${USER_SERVICE_ENABLED:-true}
 
   movie-service:
     build:

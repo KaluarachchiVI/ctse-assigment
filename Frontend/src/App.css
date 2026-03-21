@@ -1,16 +1,36 @@
+/* Theme (frontend-late inspired): dark base + fuchsia accent */
+:root {
+  --bg-page: #0c0c10;
+  --bg-elevated: #12121a;
+  --surface-elevated: rgba(0, 0, 0, 0.35);
+  --text-primary: #f8fafc;
+  --text-muted: rgba(248, 250, 252, 0.65);
+  --color-accent: #d946ef;
+  --color-accent-hover: #e879f9;
+  --border-subtle: rgba(255, 255, 255, 0.12);
+  --danger: #f87171;
+}
+
+.app-container {
+  background: var(--bg-page);
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background: white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border-subtle);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
 }
 
 .nav-brand a {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #6366f1;
+  color: var(--color-accent);
   text-decoration: none;
 }
 
@@ -21,13 +41,14 @@
 
 .nav-link {
   text-decoration: none;
-  color: #64748b;
+  color: var(--text-muted);
   font-weight: 500;
   transition: color 0.2s;
 }
 
-.nav-link:hover, .nav-link.active {
-  color: #6366f1;
+.nav-link:hover,
+.nav-link.active {
+  color: var(--color-accent-hover);
 }
 
 .nav-auth {
@@ -44,13 +65,16 @@
 }
 
 .login-btn {
-  color: #6366f1;
-  border: 1px solid #6366f1;
+  color: var(--color-accent);
+  border: 1px solid var(--color-accent);
 }
 
-.register-btn, .profile-btn, .cta-button {
-  background: #6366f1;
+.register-btn,
+.profile-btn,
+.cta-button {
+  background: linear-gradient(135deg, #c026d3, #d946ef);
   color: white;
+  border: none;
 }
 
 .main-content {
@@ -61,11 +85,22 @@
 .home-hero {
   text-align: center;
   padding: 4rem 2rem;
+  background: radial-gradient(ellipse at top, rgba(217, 70, 239, 0.12), transparent 55%),
+    var(--bg-page);
+  color: var(--text-primary);
+}
+
+.home-hero h1 {
+  color: var(--text-primary);
+}
+
+.home-hero p {
+  color: var(--text-muted);
 }
 
 .footer {
   text-align: center;
   padding: 2rem;
-  border-top: 1px solid #e2e8f0;
-  color: #64748b;
+  border-top: 1px solid var(--border-subtle);
+  color: var(--text-muted);
 }

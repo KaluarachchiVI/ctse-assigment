@@ -1,0 +1,39 @@
+# Dependencies & build output (reinstalled/built inside the image)
+node_modules
+.next
+
+# VCS & editor
+.git
+.gitignore
+.cursor
+.vscode
+.idea
+*.swp
+*.swo
+
+# Env files with secrets (use compose build args / runtime env instead)
+.env
+.env.*
+!.env.example
+
+# Logs & caches
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.turbo
+.vercel
+*.tsbuildinfo
+
+# Tests & misc (not needed for production image)
+coverage
+.nyc_output
+**/__tests__
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+
+# OS
+.DS_Store
+Thumbs.db

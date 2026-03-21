@@ -9,9 +9,13 @@ spring:
           predicates:
             - Path=/users/**
         - id: booking-service
-          uri: ${BOOKING_SERVICE_URL:http://localhost:8088}
+          uri: ${BOOKING_SERVICE_URL:http://localhost:8082}
           predicates:
             - Path=/booking/**
+        - id: payment-service
+          uri: ${PAYMENT_SERVICE_URL:http://localhost:8085}
+          predicates:
+            - Path=/payments/**
         - id: movie-service
           uri: ${MOVIE_SERVICE_URL:http://localhost:8083}
           predicates:
@@ -23,7 +27,8 @@ spring:
       globalcors:
         cors-configurations:
           '[/**]':
-            allowedOrigins: "http://localhost:5173"
+            allowedOriginPatterns:
+              - "http://localhost:*"
             allowedMethods:
             - GET
             - POST

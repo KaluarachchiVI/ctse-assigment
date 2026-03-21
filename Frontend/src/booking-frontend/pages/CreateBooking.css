@@ -37,6 +37,27 @@
   margin-top: 1rem;
 }
 
+.booking-seat-flow .guest-fields {
+  margin-bottom: 1.5rem;
+}
+
+.booking-seat-flow .guest-fields.subtle {
+  background: var(--surface-elevated, rgba(0, 0, 0, 0.35));
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.12));
+}
+
+.booking-summary {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.booking-summary .text-muted {
+  color: var(--text-muted, rgba(255, 255, 255, 0.6));
+  font-size: 0.85rem;
+}
+
 .btn-submit {
   width: 100%;
 }

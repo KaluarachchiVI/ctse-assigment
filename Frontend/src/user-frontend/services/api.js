@@ -1,7 +1,8 @@
 import axios from 'axios';
 
+// User routes are proxied at /users/** on the API gateway (CORS enabled for localhost:5173).
 const api = axios.create({
-  baseURL: 'http://localhost:8082',
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8087',
 });
 
 api.interceptors.request.use(

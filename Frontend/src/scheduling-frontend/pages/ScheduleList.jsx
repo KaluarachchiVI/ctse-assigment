@@ -43,9 +43,6 @@ export default function ScheduleList() {
     <div className="container schedule-list-container">
       <div className="schedule-header">
         <h1 className="schedule-title">Movie Schedules</h1>
-        <Link to="/schedules/new" className="btn btn-primary">
-          Create Schedule
-        </Link>
       </div>
 
       <div className="card">

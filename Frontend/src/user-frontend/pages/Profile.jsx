@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthService from '../services/AuthService';
 import api from '../services/api';
+import { bookingApi } from '../../booking-frontend/services/bookingApi';
 import './Profile.css';
 
 const Profile = () => {
@@ -25,9 +26,8 @@ const Profile = () => {
                 const userRes = await api.get(`/users/${userId}`);
                 setUser(userRes.data);
 
-                // Fetch bookings
-                const bookingsRes = await api.get(`/users/${userId}/bookings`);
-                setBookings(bookingsRes.data);
+                const list = await bookingApi.getMyBookings(token);
+                setBookings(Array.isArray(list) ? list : []);
             } catch (error) {
                 console.error("Error fetching profile data:", error);
                 if (error.response?.status === 401) {
@@ -109,7 +109,15 @@ const Profile = () => {
                                         <tr key={booking.id}>
                                             <td className="booking-id">#{booking.id.substring(0, 8)}</td>
                                             <td> {booking.seats && booking.seats.length > 0 ? booking.seats.join(', ') : 'N/A'}</td>
-                                            <td>{new Date(booking.createdAt).toLocaleDateString()}</td>
+                                            <td>
+                                              {booking.createdAt
+                                                ? new Date(
+                                                    Array.isArray(booking.createdAt)
+                                                      ? booking.createdAt[0]
+                                                      : booking.createdAt
+                                                  ).toLocaleDateString()
+                                                : '—'}
+                                            </td>
                                             <td>
                                                 <span className={`status-badge ${booking.status?.toLowerCase()}`}>
                                                     {booking.status}
@@ -123,7 +131,7 @@ const Profile = () => {
                     ) : (
                         <div className="empty-state">
                             <p>You haven't booked any movies yet.</p>
-                            <button onClick={() => navigate('/')} className="browse-btn">Browse Movies</button>
+                            <button onClick={() => navigate('/movies')} className="browse-btn">Browse Movies</button>
                         </div>
                     )}
                 </section>

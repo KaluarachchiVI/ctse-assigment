@@ -18,19 +18,19 @@ export default function Home() {
           <p className="home-card-text">
             Ready for your next movie night? Book your favorite seats now.
           </p>
-          <Link to="/bookings/new" className="btn btn-primary home-btn-full">
-            Book Now
+          <Link to="/movies" className="btn btn-primary home-btn-full">
+            Browse &amp; book
           </Link>
         </div>
 
         <div className="card home-card-content">
           <div className="home-icon">📋</div>
-          <h2 className="home-card-title">Manage Bookings</h2>
+          <h2 className="home-card-title">My bookings</h2>
           <p className="home-card-text">
-            View all bookings, update statuses, or cancel your reservations.
+            Signed-in users can see tickets and booking status on their profile.
           </p>
-          <Link to="/bookings/manage" className="btn btn-outline home-btn-full">
-            View All Bookings
+          <Link to="/profile" className="btn btn-outline home-btn-full">
+            Open profile
           </Link>
         </div>
       </div>

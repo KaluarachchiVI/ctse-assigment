@@ -33,9 +33,6 @@ export default function MovieList() {
     <div className="container movie-list-container">
       <div className="movie-header">
         <h1 className="movie-title">Movies</h1>
-        <Link to="/movies/new" className="btn btn-primary">
-          Add New Movie
-        </Link>
       </div>
 
       {movies.length === 0 ? (

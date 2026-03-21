@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { bookingApi } from '../services/bookingApi';
+import { basicAuthHeader } from '../../lib/adminAuth';
 import './BookingList.css';
 
 export default function BookingList() {
@@ -7,13 +8,15 @@ export default function BookingList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const authHeader = () => basicAuthHeader();
+
   const fetchBookings = async () => {
     try {
       setLoading(true);
-      const data = await bookingApi.getAllBookings();
+      const data = await bookingApi.getAllBookingsAdmin(authHeader());
       setBookings(data);
     } catch (err) {
-      setError('Failed to fetch bookings.');
+      setError('Failed to fetch bookings. Check admin credentials and gateway.');
       console.error(err);
     } finally {
       setLoading(false);
@@ -26,31 +29,43 @@ export default function BookingList() {
 
   const handleUpdateStatus = async (id, newStatus) => {
     try {
-      await bookingApi.updateBookingStatus(id, newStatus);
-      fetchBookings(); // Refresh the list
+      await bookingApi.updateBookingStatusAdmin(id, newStatus, authHeader());
+      fetchBookings();
     } catch (err) {
       alert('Failed to update status.');
     }
   };
 
   const handleCancel = async (id) => {
-
     try {
-      await bookingApi.cancelBooking(id);
-      fetchBookings(); // Refresh
+      await bookingApi.updateBookingStatusAdmin(id, 'CANCELLED', authHeader());
+      fetchBookings();
     } catch (err) {
       alert('Failed to cancel booking.');
     }
-
-
   };
 
   const getStatusBadge = (status) => {
     switch (status?.toUpperCase()) {
-      case 'CONFIRMED': return <span className="badge badge-success">Confirmed</span>;
-      case 'CANCELLED': return <span className="badge badge-danger">Cancelled</span>;
-      case 'PENDING': return <span className="badge badge-warning">Pending</span>;
-      default: return <span className="badge">{status}</span>;
+      case 'CONFIRMED':
+        return <span className="badge badge-success">Confirmed</span>;
+      case 'CANCELLED':
+        return <span className="badge badge-danger">Cancelled</span>;
+      case 'PENDING':
+        return <span className="badge badge-warning">Pending</span>;
+      default:
+        return <span className="badge">{status}</span>;
+    }
+  };
+
+  const formatCreated = (booking) => {
+    const raw = booking.createdAt;
+    if (!raw) return 'N/A';
+    const d = Array.isArray(raw) ? raw[0] : raw;
+    try {
+      return new Date(d).toLocaleString();
+    } catch {
+      return 'N/A';
     }
   };
 
@@ -59,18 +74,14 @@ export default function BookingList() {
       <div className="page-header booking-header">
         <div>
           <h1 className="page-title">Manage Bookings</h1>
-          <p className="page-description">Overview of all reservations in the system.</p>
+          <p className="page-description">Overview of all reservations (booking-service-late admin API).</p>
         </div>
-        <button onClick={fetchBookings} className="btn btn-outline">
+        <button type="button" onClick={fetchBookings} className="btn btn-outline">
           Refresh List
         </button>
       </div>
 
-      {error && (
-        <div className="status-message">
-          {error}
-        </div>
-      )}
+      {error && <div className="status-message">{error}</div>}
 
       <div className="table-wrapper">
         {loading ? (
@@ -91,20 +102,19 @@ export default function BookingList() {
               </tr>
             </thead>
             <tbody>
-              {bookings.map(booking => (
+              {bookings.map((booking) => (
                 <tr key={booking.id}>
                   <td className="booking-id">#{booking.id?.substring(0, 8)}</td>
-                  <td>{booking.userId}</td>
+                  <td>{booking.userId || '—'}</td>
                   <td>{booking.showId}</td>
                   <td>{booking.seats?.join(', ')}</td>
-                  <td className="text-xs text-muted">
-                    {booking.createdAt ? new Date(booking.createdAt).toLocaleString() : 'N/A'}
-                  </td>
+                  <td className="text-xs text-muted">{formatCreated(booking)}</td>
                   <td>{getStatusBadge(booking.status)}</td>
                   <td>
                     <div className="action-buttons">
                       {booking.status !== 'CONFIRMED' && booking.status !== 'CANCELLED' && (
                         <button
+                          type="button"
                           className="btn btn-outline btn-action-sm"
                           onClick={() => handleUpdateStatus(booking.id, 'CONFIRMED')}
                         >
@@ -113,6 +123,7 @@ export default function BookingList() {
                       )}
                       {booking.status !== 'CANCELLED' && (
                         <button
+                          type="button"
                           className="btn btn-danger btn-action-sm"
                           onClick={() => handleCancel(booking.id)}
                         >

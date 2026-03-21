@@ -10,11 +10,11 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -54,6 +54,7 @@ public class UserService {
         }
 
         user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
+        user.setCreatedAt(LocalDateTime.now());
         return userRepository.save(user);
     }
 
@@ -63,7 +64,7 @@ public class UserService {
         );
         var user = userRepository.findByEmail(email)
                 .orElseThrow();
-        return jwtUtils.generateToken(new User(user.getEmail(), user.getPasswordHash(), new ArrayList<>()));
+        return jwtUtils.generateToken(user);
     }
 
     public Optional<Usermodel> getUserById(String id) {

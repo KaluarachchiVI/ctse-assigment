@@ -11,6 +11,13 @@ const AuthService = {
     if (response.data.token) {
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('userId', response.data.userId);
+      localStorage.setItem('email', email);
+      try {
+        const u = await api.get(`/users/${response.data.userId}`);
+        if (u.data?.name) localStorage.setItem('name', u.data.name);
+      } catch {
+        /* optional */
+      }
     }
     return response.data;
   },
@@ -18,6 +25,8 @@ const AuthService = {
   logout: () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
+    localStorage.removeItem('email');
+    localStorage.removeItem('name');
   },
 
   getCurrentUser: () => {

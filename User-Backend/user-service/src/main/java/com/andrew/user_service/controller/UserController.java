@@ -1,9 +1,9 @@
 package com.andrew.user_service.controller;
 
 import com.andrew.user_service.dto.BookingDTO;
+import com.andrew.user_service.dto.LoginRequest;
 import com.andrew.user_service.model.Usermodel;
 import com.andrew.user_service.service.UserService;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,8 +25,8 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody LoginRequest request) {
-        String token = userService.login(request.getEmail(), request.getPassword());
-        var user = userService.getUserByEmail(request.getEmail()).orElseThrow();
+        String token = userService.login(request.email(), request.password());
+        var user = userService.getUserByEmail(request.email()).orElseThrow();
         return ResponseEntity.ok(Map.of(
             "token", token,
             "userId", user.getId()
@@ -53,11 +53,5 @@ public class UserController {
     @PutMapping("/{userId}")
     public ResponseEntity<Usermodel> updateUser(@PathVariable String userId, @RequestBody Usermodel user) {
         return ResponseEntity.ok(userService.updateUser(userId, user));
-    }
-
-    @Data
-    public static class LoginRequest {
-        private String email;
-        private String password;
     }
 }

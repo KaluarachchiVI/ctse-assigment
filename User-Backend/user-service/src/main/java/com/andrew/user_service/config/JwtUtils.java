@@ -6,6 +6,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import com.andrew.user_service.model.Usermodel;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -37,6 +38,22 @@ public class JwtUtils {
         return generateToken(new HashMap<>(), userDetails);
     }
 
+    /**
+     * Access tokens for API consumers (e.g. booking-service): {@code sub} = Mongo user id, {@code email} claim for display.
+     */
+    public String generateToken(Usermodel user) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("email", user.getEmail());
+        return Jwts
+                .builder()
+                .setClaims(claims)
+                .setSubject(user.getId())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         return buildToken(extraClaims, userDetails, jwtExpiration);
     }
@@ -57,11 +74,24 @@ public class JwtUtils {
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+        if (isTokenExpired(token)) {
+            return false;
+        }
+        final String subject = extractUsername(token);
+        // Legacy tokens used email as subject.
+        return subject != null && subject.equals(userDetails.getUsername());
     }
 
-    private boolean isTokenExpired(String token) {
+    /** True if token subject matches the user's Mongo id (or legacy: email). */
+    public boolean tokenMatchesUser(String token, Usermodel user) {
+        if (user == null || isTokenExpired(token)) {
+            return false;
+        }
+        String subject = extractUsername(token);
+        return subject != null && (subject.equals(user.getId()) || subject.equals(user.getEmail()));
+    }
+
+    public boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
