@@ -8,12 +8,14 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import com.praboth.scheduling_service.service.SeatService;
 
 @Service
 @RequiredArgsConstructor
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
+    private final SeatService seatService; // Inject SeatService
 
     public List<Schedule> getAllSchedules() {
         return scheduleRepository.findAll();
@@ -36,7 +38,11 @@ public class ScheduleService {
     }
 
     public Schedule createSchedule(Schedule schedule) {
-        return scheduleRepository.save(schedule);
+
+        Schedule savedSchedule = scheduleRepository.save(schedule);
+        seatService.initializeSeats(savedSchedule.getId(), savedSchedule.getAvailableSeats());
+        return savedSchedule;
+
     }
 
     public Schedule updateSchedule(String id, Schedule updatedSchedule) {

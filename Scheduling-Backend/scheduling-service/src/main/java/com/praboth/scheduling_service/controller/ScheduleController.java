@@ -23,6 +23,11 @@ public class ScheduleController {
         return ResponseEntity.ok(scheduleService.getAllSchedules());
     }
 
+    @GetMapping("/")
+    public String test() {
+        return "Hello World test";
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Schedule> getScheduleById(@PathVariable String id) {
         return scheduleService.getScheduleById(id)
