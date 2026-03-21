@@ -6,6 +6,10 @@ import Home from './booking-frontend/pages/Home';
 import BookingList from './booking-frontend/pages/BookingList';
 import CreateBooking from './booking-frontend/pages/CreateBooking';
 import UserBookings from './booking-frontend/pages/UserBookings';
+import MovieList from './movie-frontend/pages/MovieList';
+import CreateMovie from './movie-frontend/pages/CreateMovie';
+import ScheduleList from './scheduling-frontend/pages/ScheduleList';
+import CreateSchedule from './scheduling-frontend/pages/CreateSchedule';
 import './App.css';
 
 function App() {
@@ -18,6 +22,8 @@ function App() {
           </div>
           <div className="nav-links">
             <NavLink to="/" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Home</NavLink>
+            <NavLink to="/movies" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Movies</NavLink>
+            <NavLink to="/schedules" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Schedules</NavLink>
             <NavLink to="/bookings/manage" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Manage Bookings</NavLink>
             <NavLink to="/profile" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Profile</NavLink>
           </div>
@@ -45,6 +51,10 @@ function App() {
               </div>
             } />
             <Route path="/bookinghome" element={<Home />} />
+            <Route path="/movies" element={<MovieList />} />
+            <Route path="/movies/new" element={<CreateMovie />} />
+            <Route path="/schedules" element={<ScheduleList />} />
+            <Route path="/schedules/new" element={<CreateSchedule />} />
             <Route path="/bookings/new" element={<CreateBooking />} />
             <Route path="/bookings/manage" element={<BookingList />} />
             <Route path="/bookings/user/:userId" element={<UserBookings />} />

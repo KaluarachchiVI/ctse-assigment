@@ -1,0 +1,35 @@
+.movie-form-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.form-card {
+  padding: 2.5rem;
+}
+
+.form-card-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0 0 2rem 0;
+  color: var(--text-main);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+}
+
+.error-message {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.form-actions {
+  margin-top: 2rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  border-top: 1px solid var(--border);
+  padding-top: 1.5rem;
+}
