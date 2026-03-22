@@ -1,76 +1,11 @@
-.register-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 80vh;
+/* Using shared auth-page layout from Login.css */
+@import './Login.css';
+
+/* Register-specific adjustments if any */
+.auth-container {
+    max-width: 500px; /* Slightly wider for the two-column row */
 }
 
-.register-form {
-    background: #f4f4f4;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    width: 300px;
-    max-width: 100%;
-    color: #0f172a;
-}
-
-.register-form h2 {
-    color: #0f172a;
-    margin-top: 0;
-}
-
-.register-form .form-group {
-    margin-bottom: 1rem;
-}
-
-.register-form .form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: #0f172a;
-}
-
-.register-form .form-group input {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    color: #0f172a;
-    background: #fff;
-}
-
-.register-form .form-group input::placeholder {
-    color: #64748b;
-}
-
-.register-form p {
-    color: #0f172a;
-    font-size: 0.9rem;
-    margin-top: 1rem;
-}
-
-.register-form p span {
-    color: #0369a1;
-    cursor: pointer;
-    text-decoration: underline;
-}
-
-.register-form button[type="submit"] {
-    width: 100%;
-    padding: 0.75rem;
-    background: #28a745;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.register-form button[type="submit"]:hover {
-    background: #218838;
-}
-
-.register-form .error {
-    color: #b91c1c;
-    font-size: 0.85rem;
-    margin-bottom: 1rem;
+.grid {
+    gap: 1rem;
 }

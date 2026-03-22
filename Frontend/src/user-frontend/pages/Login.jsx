@@ -30,33 +30,56 @@ const Login = () => {
     };
 
     return (
-        <div className="login-container">
-            <form className="login-form" onSubmit={handleLogin}>
-                <h2>Login</h2>
-                {error && <p className="error">{error}</p>}
-                <div className="form-group">
-                    <label>Email</label>
-                    <input 
-                        type="email" 
-                        value={email} 
-                        onChange={(e) => setEmail(e.target.value)} 
-                        required 
-                    />
-                </div>
-                <div className="form-group">
-                    <label>Password</label>
-                    <input 
-                        type="password" 
-                        value={password} 
-                        onChange={(e) => setPassword(e.target.value)} 
-                        required 
-                    />
-                </div>
-                <button type="submit">Login</button>
-                <p>
-                    Don't have an account? <span onClick={() => navigate('/register')}>Register here</span>
-                </p>
-            </form>
+        <div className="auth-page">
+            <div className="auth-container animate-fade-in">
+                <form className="auth-card" onSubmit={handleLogin}>
+                    <div className="auth-header">
+                        <h2>Welcome Back</h2>
+                        <p>Enter your credentials to access your account</p>
+                    </div>
+                    
+                    {error && (
+                        <div className="auth-error">
+                            <span className="error-icon">⚠️</span>
+                            {error}
+                        </div>
+                    )}
+
+                    <div className="form-group">
+                        <label className="form-label">Email Address</label>
+                        <input 
+                            type="email" 
+                            className="form-input"
+                            placeholder="name@example.com"
+                            value={email} 
+                            onChange={(e) => setEmail(e.target.value)} 
+                            required 
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label className="form-label">Password</label>
+                        <input 
+                            type="password" 
+                            className="form-input"
+                            placeholder="••••••••"
+                            value={password} 
+                            onChange={(e) => setPassword(e.target.value)} 
+                            required 
+                        />
+                    </div>
+
+                    <button type="submit" className="btn btn-primary auth-submit">
+                        Sign In
+                    </button>
+
+                    <div className="auth-footer">
+                        <p>
+                            Don't have an account? <button type="button" className="auth-link" onClick={() => navigate('/register')}>Register here</button>
+                        </p>
+                    </div>
+                </form>
+            </div>
         </div>
     );
 };
