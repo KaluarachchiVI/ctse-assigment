@@ -28,10 +28,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/schedules/health", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/schedules/**").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/schedules/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/schedules/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/schedules/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/schedules", "/schedules/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/schedules", "/schedules/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/schedules", "/schedules/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/schedules", "/schedules/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '@/lib/api';
 import SeatSelection from '../components/SeatSelection';
 import { buildDefaultSeatLayout } from '../utils/buildDefaultSeatLayout';
 import { bookingApi } from '../services/bookingApi';
@@ -53,12 +53,12 @@ export default function CreateBooking() {
       setError('');
       try {
         const base = getGatewayBaseUrl();
-        const schRes = await axios.get(`${base}/schedules/${encodeURIComponent(scheduleId)}`);
+        const schRes = await api.get(`/schedules/${encodeURIComponent(scheduleId)}`);
         if (cancelled) return;
         setSchedule(schRes.data);
         if (movieId) {
           try {
-            const mRes = await axios.get(`${base}/movies/${encodeURIComponent(movieId)}`);
+            const mRes = await api.get(`/movies/${encodeURIComponent(movieId)}`);
             if (!cancelled) setMovieTitle(mRes.data?.title || '');
           } catch {
             /* optional */

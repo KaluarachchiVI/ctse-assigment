@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
+import api from '@/lib/api';
 import { tmdbApi } from '../services/tmdbService';
 import './CreateMovie.css';
 
@@ -52,7 +52,7 @@ export default function CreateMovie() {
       const fetchMovie = async () => {
         setLoading(true);
         try {
-          const response = await axios.get(`http://localhost:8087/movies/${id}`);
+          const response = await api.get(`/movies/${id}`);
           setFormData(response.data);
         } catch (err) {
           console.error('Fetch error:', err);
@@ -128,9 +128,9 @@ export default function CreateMovie() {
       };
 
       if (isEditMode) {
-        await axios.put(`http://localhost:8087/movies/${id}`, payload);
+        await api.put(`/movies/${id}`, payload);
       } else {
-        await axios.post('http://localhost:8087/movies', payload);
+        await api.post('/movies', payload);
       }
       navigate('/admin/movies');
     } catch (err) {

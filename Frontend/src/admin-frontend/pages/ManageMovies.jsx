@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '@/lib/api';
 import { GlowingEffect } from '@/components/ui/glowing-effect';
 import { cn } from '@/lib/utils';
 import '../../movie-frontend/pages/MovieList.css';
@@ -14,7 +14,7 @@ export default function ManageMovies() {
 
   const fetchMovies = async () => {
     try {
-      const response = await axios.get('http://localhost:8087/movies');
+      const response = await api.get('/movies');
       setMovies(response.data);
     } catch (err) {
       console.error('Failed to fetch movies', err);
@@ -32,7 +32,7 @@ export default function ManageMovies() {
     if (window.confirm(`Are you sure you want to delete "${title}"?`)) {
       setDeleteError('');
       try {
-        await axios.delete(`http://localhost:8087/movies/${id}`);
+        await api.delete(`/movies/${id}`);
         setMovies(movies.filter(m => m.id !== id));
       } catch (err) {
         console.error('Delete error', err);

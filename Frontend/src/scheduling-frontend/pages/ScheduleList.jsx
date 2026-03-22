@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '@/lib/api';
 import './ScheduleList.css';
 
 function formatScheduleDate(value) {
@@ -34,8 +34,8 @@ export default function ScheduleList() {
     const fetchData = async () => {
       try {
         const [schedulesRes, moviesRes] = await Promise.all([
-          axios.get('http://localhost:8087/schedules'),
-          axios.get('http://localhost:8087/movies')
+          api.get('/schedules'),
+          api.get('/movies')
         ]);
         
         setSchedules(schedulesRes.data);

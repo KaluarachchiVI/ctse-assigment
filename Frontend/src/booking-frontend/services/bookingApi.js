@@ -1,7 +1,8 @@
 import axios from 'axios';
+import api from '@/lib/api';
 import { getGatewayBaseUrl } from '../../lib/gateway';
 
-const gateway = () => getGatewayBaseUrl();
+function gateway() { return getGatewayBaseUrl(); }
 
 /** @deprecated Legacy yuvidu booking paths — prefer createBookingV2 / getMyBookings */
 const bookingBase = () => `${gateway()}/booking`;
@@ -9,7 +10,7 @@ const bookingBase = () => `${gateway()}/booking`;
 export const bookingApi = {
   /** booking-service-late: POST /booking */
   createBookingV2: async (payload) => {
-    const response = await axios.post(`${gateway()}/booking`, payload);
+    const response = await api.post('/booking', payload);
     return response.data;
   },
 
@@ -26,9 +27,8 @@ export const bookingApi = {
   },
 
   getMyBookings: async (token) => {
-    const response = await axios.get(`${gateway()}/booking/me`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    // Shared api already has the token from localStorage
+    const response = await api.get('/booking/me');
     return response.data;
   },
 
@@ -50,22 +50,22 @@ export const bookingApi = {
   },
 
   createBooking: async (bookingData) => {
-    const response = await axios.post(bookingBase(), bookingData);
+    const response = await api.post('/booking', bookingData);
     return response.data;
   },
 
   getBookingById: async (id) => {
-    const response = await axios.get(`${bookingBase()}/${id}`);
+    const response = await api.get(`/booking/${id}`);
     return response.data;
   },
 
   getBookingsByUser: async (userId) => {
-    const response = await axios.get(`${bookingBase()}/user/${userId}`);
+    const response = await api.get(`/booking/user/${userId}`);
     return response.data;
   },
 
   getAllBookings: async () => {
-    const response = await axios.get(bookingBase());
+    const response = await api.get('/booking');
     return response.data;
   },
 

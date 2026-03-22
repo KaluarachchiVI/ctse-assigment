@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '@/lib/api';
 import { GlowingEffect } from '@/components/ui/glowing-effect';
 import { cn } from '@/lib/utils';
 import './MovieList.css';
@@ -15,7 +15,7 @@ export default function MovieList() {
       try {
         // Use the API Gateway URL for movies if available, or direct service.
         // Assuming API Gateway routes /api/movies to the movie service.
-        const response = await axios.get('http://localhost:8087/movies');
+        const response = await api.get('/movies');
         setMovies(response.data);
       } catch (err) {
         console.error('Failed to fetch movies', err);

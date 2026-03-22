@@ -46,7 +46,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtDecoder jwtDecoder(
-            @Value("${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}") String secret
+            @Value("${JWT_SECRET:YnJlYWtvdXQtY3RzZS1hc3NpZ25tZW50LXNlY3JldC1rZXktMjAyNjA0MDY=}") String secret
     ) {
         if (secret == null || secret.isBlank()) {
             throw new IllegalStateException(
@@ -101,7 +101,7 @@ public class SecurityConfig {
         UserDetails admin = User.builder()
                 .username(username)
                 .password(encoder.encode(password))
-                .roles("BOOKING_ADMIN")
+                .roles("ADMIN")
                 .build();
         return new InMemoryUserDetailsManager(admin);
     }

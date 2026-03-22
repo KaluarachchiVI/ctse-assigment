@@ -54,10 +54,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (userOpt.isPresent()) {
                 Usermodel user = userOpt.get();
                 if (jwtUtils.tokenMatchesUser(jwt, user)) {
+                    String role = user.getRole() != null ? user.getRole().toUpperCase() : "USER";
+                    System.out.println("DEBUG: user-service mapped role: " + role);
                     UserDetails userDetails = new User(
                             user.getEmail(),
                             user.getPasswordHash(),
-                            new ArrayList<>()
+                            java.util.Collections.singletonList(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + role))
                     );
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails,

@@ -45,17 +45,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 if (jwtUtils.isTokenValid(jwt)) {
+                    String finalRole = (role != null) ? role.toUpperCase() : "USER";
+                    System.out.println("DEBUG: movie-service extracted role: " + finalRole);
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userEmail,
                             null,
-                            Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role))
+                            Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + finalRole))
                     );
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
         } catch (Exception e) {
-            // Token parsing failed
+            System.out.println("DEBUG: movie-service JWT validation failed: " + e.getMessage());
+            e.printStackTrace();
         }
         filterChain.doFilter(request, response);
     }

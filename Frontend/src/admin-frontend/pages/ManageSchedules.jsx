@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '@/lib/api';
 import '../../scheduling-frontend/pages/ScheduleList.css';
 
 function formatScheduleDate(value) {
@@ -35,8 +35,8 @@ export default function ManageSchedules() {
   const fetchData = async () => {
     try {
       const [schedulesRes, moviesRes] = await Promise.all([
-        axios.get('http://localhost:8087/schedules'),
-        axios.get('http://localhost:8087/movies')
+        api.get('/schedules'),
+        api.get('/movies')
       ]);
       
       setSchedules(schedulesRes.data);
@@ -62,7 +62,7 @@ export default function ManageSchedules() {
     if (window.confirm('Are you sure you want to delete this schedule?')) {
       setDeleteError('');
       try {
-        await axios.delete(`http://localhost:8087/schedules/${id}`);
+        await api.delete(`/schedules/${id}`);
         setSchedules(schedules.filter(s => s.id !== id));
       } catch (err) {
         console.error('Delete error', err);

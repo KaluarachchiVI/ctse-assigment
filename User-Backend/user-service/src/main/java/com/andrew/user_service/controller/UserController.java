@@ -29,7 +29,8 @@ public class UserController {
         var user = userService.getUserByEmail(request.email()).orElseThrow();
         return ResponseEntity.ok(Map.of(
             "token", token,
-            "userId", user.getId()
+            "userId", user.getId(),
+            "role", user.getRole() != null ? user.getRole().toUpperCase() : "USER"
         ));
     }
 

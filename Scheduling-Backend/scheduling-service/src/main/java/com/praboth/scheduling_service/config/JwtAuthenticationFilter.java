@@ -43,19 +43,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             userEmail = jwtUtils.extractUsername(jwt);
             role = jwtUtils.extractRole(jwt);
 
+            System.out.println("DEBUG: scheduling-service extracted email: " + userEmail + " and role: " + role);
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 if (jwtUtils.isTokenValid(jwt)) {
+                    String finalRole = (role != null) ? role.toUpperCase() : "USER";
+                    System.out.println("DEBUG: scheduling-service mapped role: " + finalRole);
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userEmail,
                             null,
-                            Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role))
+                            Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + finalRole))
                     );
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+                } else {
+                    System.out.println("DEBUG: scheduling-service token is invalid");
                 }
+            } else {
+                System.out.println("DEBUG: scheduling-service userEmail is null or already authenticated");
             }
         } catch (Exception e) {
-            // Token parsing failed
+            System.out.println("DEBUG: scheduling-service JWT validation failed: " + e.getMessage());
+            e.printStackTrace();
         }
         filterChain.doFilter(request, response);
     }

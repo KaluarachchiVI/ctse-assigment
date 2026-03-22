@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '@/lib/api';
 import { getGatewayBaseUrl } from '../../lib/gateway';
 import './MovieDetails.css';
 
@@ -39,8 +39,8 @@ export default function MovieDetails() {
       try {
         const base = getGatewayBaseUrl();
         const [movieRes, schedulesRes] = await Promise.all([
-          axios.get(`${base}/movies/${id}`),
-          axios.get(`${base}/schedules/movie/${id}`),
+          api.get(`/movies/${id}`),
+          api.get(`/schedules/movie/${id}`),
         ]);
         
         setMovie(movieRes.data);

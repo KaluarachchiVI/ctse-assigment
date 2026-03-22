@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
-import axios from 'axios';
+import api from '@/lib/api';
 // We can reuse the movie form styling as it's very similar
 import '../../movie-frontend/pages/CreateMovie.css'; 
 
@@ -33,12 +33,12 @@ export default function CreateSchedule() {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await axios.get('http://localhost:8087/movies');
+        const response = await api.get('/movies');
         setMovies(response.data);
         
         // If in edit mode, fetch the schedule after movies are loaded
         if (isEditMode) {
-          const scheduleRes = await axios.get(`http://localhost:8087/schedules/${id}`);
+          const scheduleRes = await api.get(`/schedules/${id}`);
           const schedule = scheduleRes.data;
           
           setFormData({
@@ -92,9 +92,9 @@ export default function CreateSchedule() {
       };
 
       if (isEditMode) {
-        await axios.put(`http://localhost:8087/schedules/${id}`, payload);
+        await api.put(`/schedules/${id}`, payload);
       } else {
-        await axios.post('http://localhost:8087/schedules', payload);
+        await api.post('/schedules', payload);
       }
       navigate('/admin/schedules');
     } catch (err) {
