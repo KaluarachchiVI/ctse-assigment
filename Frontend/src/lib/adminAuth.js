@@ -14,3 +14,7 @@ export function basicAuthHeader() {
 export function isAdminSession() {
   return localStorage.getItem('adminAuth') === '1';
 }
+
+export function logoutAdmin() {
+  localStorage.removeItem('adminAuth');
+}

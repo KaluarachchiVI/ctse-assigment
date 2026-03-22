@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, NavLink, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, NavLink, Navigate, useNavigate } from 'react-router-dom';
 import Login from './user-frontend/pages/Login';
 import Register from './user-frontend/pages/Register';
 import Profile from './user-frontend/pages/Profile';
@@ -16,10 +16,27 @@ import CreateSchedule from './scheduling-frontend/pages/CreateSchedule';
 import AdminRoute from './admin-frontend/AdminRoute';
 import AdminLogin from './admin-frontend/pages/AdminLogin';
 import AdminDashboard from './admin-frontend/pages/AdminDashboard';
+import ManageMovies from './admin-frontend/pages/ManageMovies';
+import ManageSchedules from './admin-frontend/pages/ManageSchedules';
 import LandingPage from './components/LandingPage';
+import AuthService from './user-frontend/services/AuthService';
+import { isAdminSession, logoutAdmin } from './lib/adminAuth';
 import './App.css';
 
 function Navbar() {
+  const navigate = useNavigate();
+  const isLoggedIn = !!localStorage.getItem('token');
+  const isAdmin = isAdminSession();
+
+  const handleLogout = () => {
+    if (isAdmin) {
+      logoutAdmin();
+    } else {
+      AuthService.logout();
+    }
+    navigate('/');
+  };
+
   return (
     <nav className="navbar">
       <div className="nav-brand">
@@ -29,16 +46,29 @@ function Navbar() {
         <NavLink end to="/" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Home</NavLink>
         <NavLink to="/movies" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Movies</NavLink>
         <NavLink to="/schedules" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Schedules</NavLink>
-        <NavLink to="/profile" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Profile</NavLink>
+        {isAdmin ? (
+          <NavLink to="/admin" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Admin Dashboard</NavLink>
+        ) : (
+          <NavLink to="/profile" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Profile</NavLink>
+        )}
       </div>
       <div className="nav-auth">
-        {!localStorage.getItem('token') ? (
+        {!isLoggedIn && !isAdmin ? (
           <>
             <NavLink to="/login" className="auth-btn login-btn">Login</NavLink>
             <NavLink to="/register" className="auth-btn register-btn">Register</NavLink>
           </>
         ) : (
-          <NavLink to="/profile" className="auth-btn profile-btn">My Dashboard</NavLink>
+          <>
+            {isAdmin ? (
+               <NavLink to="/admin" className="auth-btn profile-btn">Admin Panel</NavLink>
+            ) : (
+               <NavLink to="/profile" className="auth-btn profile-btn">Account</NavLink>
+            )}
+            <button onClick={handleLogout} className="auth-btn logout-btn" style={{ marginLeft: '10px' }}>
+              Logout
+            </button>
+          </>
         )}
       </div>
     </nav>
@@ -91,8 +121,14 @@ function App() {
                 <Route path="/admin/login" element={<AdminLogin />} />
                 <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
                 <Route path="/admin/bookings" element={<AdminRoute><BookingList /></AdminRoute>} />
+                
+                <Route path="/admin/movies" element={<AdminRoute><ManageMovies /></AdminRoute>} />
                 <Route path="/admin/movies/new" element={<AdminRoute><CreateMovie /></AdminRoute>} />
+                <Route path="/admin/movies/edit/:id" element={<AdminRoute><CreateMovie /></AdminRoute>} />
+                
+                <Route path="/admin/schedules" element={<AdminRoute><ManageSchedules /></AdminRoute>} />
                 <Route path="/admin/schedules/new" element={<AdminRoute><CreateSchedule /></AdminRoute>} />
+                <Route path="/admin/schedules/edit/:id" element={<AdminRoute><CreateSchedule /></AdminRoute>} />
 
                 <Route path="*" element={<Navigate to="/" />} />
               </Routes>

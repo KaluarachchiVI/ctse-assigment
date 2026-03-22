@@ -10,13 +10,13 @@ export default function AdminDashboard() {
         <p className="sub">Manage movies, schedules, and bookings.</p>
       </div>
       <div className="admin-dashboard-grid">
-        <Link to="/admin/movies/new" className="admin-tile">
-          <h2>Add movie</h2>
-          <p>Create a new listing in the catalogue.</p>
+        <Link to="/admin/movies" className="admin-tile">
+          <h2>Manage movies</h2>
+          <p>View, edit, or delete film listings.</p>
         </Link>
-        <Link to="/admin/schedules/new" className="admin-tile">
-          <h2>Create schedule</h2>
-          <p>Add showtimes for a movie.</p>
+        <Link to="/admin/schedules" className="admin-tile">
+          <h2>Manage schedules</h2>
+          <p>View, edit, or delete showtimes.</p>
         </Link>
         <Link to="/admin/bookings" className="admin-tile">
           <h2>Manage bookings</h2>

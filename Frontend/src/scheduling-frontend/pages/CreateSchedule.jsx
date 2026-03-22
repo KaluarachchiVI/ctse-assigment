@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
 // We can reuse the movie form styling as it's very similar
 import '../../movie-frontend/pages/CreateMovie.css'; 
 
 export default function CreateSchedule() {
+  const { id } = useParams();
+  const isEditMode = !!id;
   const navigate = useNavigate();
   const location = useLocation();
   const [movies, setMovies] = useState([]);
@@ -32,12 +34,33 @@ export default function CreateSchedule() {
       try {
         const response = await axios.get('http://localhost:8087/movies');
         setMovies(response.data);
+        
+        // If in edit mode, fetch the schedule after movies are loaded
+        if (isEditMode) {
+          const scheduleRes = await axios.get(`http://localhost:8087/schedules/${id}`);
+          const schedule = scheduleRes.data;
+          
+          setFormData({
+            movieId: schedule.movieId,
+            hallId: schedule.hallId,
+            date: schedule.date,
+            time: schedule.time,
+            price: schedule.price.toString(),
+            availableSeats: schedule.availableSeats.toString(),
+            status: schedule.status
+          });
+
+          // Find and set the movie search text
+          const movie = response.data.find(m => m.id === schedule.movieId);
+          if (movie) setMovieSearch(movie.title);
+        }
       } catch (err) {
-        console.error('Failed to fetch movies', err);
+        console.error('Failed to fetch data', err);
+        setError('Failed to load data.');
       }
     };
     fetchMovies();
-  }, []);
+  }, [id, isEditMode]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -59,11 +82,15 @@ export default function CreateSchedule() {
         availableSeats: parseInt(formData.availableSeats, 10)
       };
 
-      await axios.post('http://localhost:8087/schedules', payload);
-      navigate('/schedules');
+      if (isEditMode) {
+        await axios.put(`http://localhost:8087/schedules/${id}`, payload);
+      } else {
+        await axios.post('http://localhost:8087/schedules', payload);
+      }
+      navigate('/admin/schedules');
     } catch (err) {
-      console.error('Error creating schedule:', err);
-      setError(err.response?.data?.message || 'Failed to create schedule. Please check your inputs.');
+      console.error('Error saving schedule:', err);
+      setError(err.response?.data?.message || `Failed to ${isEditMode ? 'update' : 'create'} schedule.`);
     } finally {
       setLoading(false);
     }
@@ -72,7 +99,7 @@ export default function CreateSchedule() {
   return (
     <div className="container animate-fade-in movie-form-container">
       <div className="card form-card">
-        <h1 className="form-card-title">Create Movie Schedule</h1>
+        <h1 className="form-card-title">{isEditMode ? 'Edit Movie Schedule' : 'Create Movie Schedule'}</h1>
         
         {error && <div className="error-message">{error}</div>}
 
@@ -217,7 +244,7 @@ export default function CreateSchedule() {
               className="btn btn-primary"
               disabled={loading}
             >
-              {loading ? 'Creating...' : 'Create Schedule'}
+              {loading ? 'Saving...' : (isEditMode ? 'Update Schedule' : 'Create Schedule')}
             </button>
           </div>
         </form>

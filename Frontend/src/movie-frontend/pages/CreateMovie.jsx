@@ -1,10 +1,12 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { tmdbApi } from '../services/tmdbService';
 import './CreateMovie.css';
 
 export default function CreateMovie() {
+  const { id } = useParams();
+  const isEditMode = !!id;
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -44,6 +46,24 @@ export default function CreateMovie() {
       setIsSearching(false);
     }
   };
+
+  useEffect(() => {
+    if (isEditMode) {
+      const fetchMovie = async () => {
+        setLoading(true);
+        try {
+          const response = await axios.get(`http://localhost:8087/movies/${id}`);
+          setFormData(response.data);
+        } catch (err) {
+          console.error('Fetch error:', err);
+          setError('Failed to load movie details for editing.');
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchMovie();
+    }
+  }, [id, isEditMode]);
 
   const handleSelectMovie = async (tmdbMovie) => {
     setLoading(true);
@@ -107,11 +127,15 @@ export default function CreateMovie() {
         rating: parseFloat(formData.rating) || 0
       };
 
-      await axios.post('http://localhost:8087/movies', payload);
-      navigate('/movies');
+      if (isEditMode) {
+        await axios.put(`http://localhost:8087/movies/${id}`, payload);
+      } else {
+        await axios.post('http://localhost:8087/movies', payload);
+      }
+      navigate('/admin/movies');
     } catch (err) {
-      console.error('Error creating movie:', err);
-      setError(err.response?.data?.message || 'Failed to create movie. Please check your inputs.');
+      console.error('Error saving movie:', err);
+      setError(err.response?.data?.message || `Failed to ${isEditMode ? 'update' : 'create'} movie.`);
     } finally {
       setLoading(false);
     }
@@ -120,7 +144,7 @@ export default function CreateMovie() {
   return (
     <div className="container animate-fade-in movie-form-container">
       <div className="card form-card">
-        <h1 className="form-card-title">Add New Movie</h1>
+        <h1 className="form-card-title">{isEditMode ? 'Edit Movie' : 'Add New Movie'}</h1>
         
         {error && <div className="error-message">{error}</div>}
 

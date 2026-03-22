@@ -75,6 +75,19 @@
   background: linear-gradient(135deg, #c026d3, #d946ef);
   color: white;
   border: none;
+  cursor: pointer;
+}
+
+.logout-btn {
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
+  background: transparent;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  color: var(--danger);
+  border-color: var(--danger);
 }
 
 .main-content {

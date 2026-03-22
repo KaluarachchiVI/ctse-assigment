@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthService from '../services/AuthService';
+import { ADMIN_USERNAME, ADMIN_PASSWORD } from '../../lib/adminAuth';
 import './Login.css';
 
 const Login = () => {
@@ -11,6 +12,15 @@ const Login = () => {
 
     const handleLogin = async (e) => {
         e.preventDefault();
+        setError('');
+        
+        // Admin Auto-Redirect Check
+        if (email === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+            localStorage.setItem('adminAuth', '1');
+            navigate('/admin');
+            return;
+        }
+
         try {
             await AuthService.login(email, password);
             navigate('/profile');
