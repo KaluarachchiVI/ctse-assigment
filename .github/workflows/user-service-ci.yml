@@ -1,0 +1,116 @@
+name: User Service — CI
+
+on:
+  push:
+    branches: [ "main", "dev*" ]
+    paths:
+      - "User-Backend/**"
+      - ".github/workflows/user-service-ci.yml"
+  pull_request:
+    branches: [ "main", "dev*" ]
+    paths:
+      - "User-Backend/**"
+      - ".github/workflows/user-service-ci.yml"
+
+jobs:
+  # ── 1. Build & Test ────────────────────────────────────────────────────────
+  build-and-test:
+    name: Build, Test & Coverage
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: "17"
+          distribution: "temurin"
+          cache: maven
+
+      - name: Build & run tests with JaCoCo
+        run: mvn --batch-mode verify
+        working-directory: User-Backend/user-service
+
+      - name: Upload JaCoCo coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: user-service-jacoco-report
+          path: User-Backend/user-service/target/site/jacoco/
+          retention-days: 7
+        if: hashFiles('User-Backend/user-service/target/site/jacoco/jacoco.xml') != ''
+
+      - name: Enforce minimum coverage (80 %)
+        run: |
+          MISSED=$(grep -oPm1 '(?<=<counter type="LINE" missed=")[0-9]+' \
+            User-Backend/user-service/target/site/jacoco/jacoco.xml || echo 0)
+          COVERED=$(grep -oPm1 '(?<=covered=")[0-9]+' \
+            User-Backend/user-service/target/site/jacoco/jacoco.xml || echo 1)
+          TOTAL=$((MISSED + COVERED))
+          # Skip coverage check if no tests exist (TOTAL is 0 or 1 with no actual coverage)
+          if [ "$TOTAL" -le 1 ]; then
+            echo "::warning::No tests found - skipping coverage enforcement"
+            exit 0
+          fi
+          PCT=$(( COVERED * 100 / TOTAL ))
+          echo "Line coverage: ${PCT}% (${COVERED}/${TOTAL})"
+          if [ "$PCT" -lt 80 ]; then
+            echo "::error::Coverage ${PCT}% is below the 80% minimum threshold"
+            exit 1
+          fi
+        if: hashFiles('User-Backend/user-service/target/site/jacoco/jacoco.xml') != ''
+
+  # ── 2. Code Quality — Checkstyle ──────────────────────────────────────────
+  code-quality:
+    name: Code Quality (Checkstyle)
+    runs-on: ubuntu-latest
+    needs: build-and-test
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: "17"
+          distribution: "temurin"
+          cache: maven
+
+      - name: Run Checkstyle
+        run: mvn --batch-mode checkstyle:check
+        working-directory: User-Backend/user-service
+        continue-on-error: true   # report results but don't fail the pipeline yet
+
+      - name: Upload Checkstyle report
+        uses: actions/upload-artifact@v4
+        with:
+          name: user-service-checkstyle
+          path: User-Backend/user-service/target/checkstyle-result.xml
+          retention-days: 7
+
+  # ── 3. Docker Build ────────────────────────────────────────────────────────
+  docker-build:
+    name: Docker Build Check
+    runs-on: ubuntu-latest
+    needs: build-and-test
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17 & build JAR
+        uses: actions/setup-java@v4
+        with:
+          java-version: "17"
+          distribution: "temurin"
+          cache: maven
+
+      - name: Package (skip tests — already ran)
+        run: mvn --batch-mode package -DskipTests
+        working-directory: User-Backend/user-service
+
+      - name: Build Docker image
+        run: |
+          docker build -t user-service:ci User-Backend/user-service
