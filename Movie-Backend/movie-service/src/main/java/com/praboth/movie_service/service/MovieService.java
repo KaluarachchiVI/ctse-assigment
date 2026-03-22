@@ -35,10 +35,12 @@ public class MovieService {
     }
 
     public Movie createMovie(Movie movie) {
+        sanitize(movie);
         return movieRepository.save(movie);
     }
 
     public Movie updateMovie(String id, Movie updatedMovie) {
+        sanitize(updatedMovie);
         return movieRepository.findById(id)
                 .map(existingMovie -> {
                     existingMovie.setTitle(updatedMovie.getTitle());
@@ -62,6 +64,20 @@ public class MovieService {
     }
 
     public void deleteMovie(String id) {
+        if (!movieRepository.existsById(id)) {
+            throw new RuntimeException("Movie not found with id: " + id);
+        }
         movieRepository.deleteById(id);
+    }
+
+    // ── private helpers ──────────────────────────────────────────────────────
+
+    private void sanitize(Movie movie) {
+        if (movie.getTitle() != null) movie.setTitle(movie.getTitle().trim());
+        if (movie.getDescription() != null) movie.setDescription(movie.getDescription().trim());
+        if (movie.getGenre() != null) movie.setGenre(movie.getGenre().trim());
+        if (movie.getLanguage() != null) movie.setLanguage(movie.getLanguage().trim());
+        if (movie.getDirector() != null) movie.setDirector(movie.getDirector().trim());
+        if (movie.getStatus() != null) movie.setStatus(movie.getStatus().trim().toUpperCase());
     }
 }

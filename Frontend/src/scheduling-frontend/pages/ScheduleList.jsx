@@ -77,7 +77,8 @@ export default function ScheduleList() {
                   <th>Movie</th>
                   <th>Hall</th>
                   <th>Date</th>
-                  <th>Time</th>
+                  <th>Start Time</th>
+                  <th>End Time</th>
                   <th>Price</th>
                   <th>Available Seats</th>
                   <th>Status</th>
@@ -106,6 +107,7 @@ export default function ScheduleList() {
                       <td>{schedule.hallId}</td>
                       <td>{formatScheduleDate(schedule.date)}</td>
                       <td>{schedule.time}</td>
+                      <td>{schedule.endTime || '—'}</td>
                       <td>${schedule.price.toFixed(2)}</td>
                       <td>{schedule.availableSeats}</td>
                       <td>

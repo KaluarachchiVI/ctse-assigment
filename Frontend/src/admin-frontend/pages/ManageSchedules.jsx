@@ -29,6 +29,7 @@ export default function ManageSchedules() {
   const [movies, setMovies] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [deleteError, setDeleteError] = useState('');
   const navigate = useNavigate();
 
   const fetchData = async () => {
@@ -59,12 +60,13 @@ export default function ManageSchedules() {
 
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this schedule?')) {
+      setDeleteError('');
       try {
         await axios.delete(`http://localhost:8087/schedules/${id}`);
         setSchedules(schedules.filter(s => s.id !== id));
       } catch (err) {
         console.error('Delete error', err);
-        alert('Failed to delete schedule.');
+        setDeleteError('Failed to delete schedule. It may have bookings attached.');
       }
     }
   };
@@ -81,6 +83,12 @@ export default function ManageSchedules() {
         </Link>
       </div>
 
+      {deleteError && (
+        <div className="alert-banner alert-banner--error" role="alert">
+          ❌ {deleteError}
+        </div>
+      )}
+
       <div className="card">
         {schedules.length === 0 ? (
           <p>No schedules found.</p>
@@ -92,7 +100,8 @@ export default function ManageSchedules() {
                   <th>Movie</th>
                   <th>Hall</th>
                   <th>Date</th>
-                  <th>Time</th>
+                  <th>Start</th>
+                  <th>End</th>
                   <th>Price</th>
                   <th>Seats</th>
                   <th>Status</th>
@@ -121,6 +130,7 @@ export default function ManageSchedules() {
                       <td>{schedule.hallId}</td>
                       <td>{formatScheduleDate(schedule.date)}</td>
                       <td>{schedule.time}</td>
+                      <td>{schedule.endTime || '—'}</td>
                       <td>${schedule.price.toFixed(2)}</td>
                       <td>{schedule.availableSeats}</td>
                       <td>

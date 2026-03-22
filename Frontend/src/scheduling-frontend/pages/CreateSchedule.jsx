@@ -13,7 +13,7 @@ export default function CreateSchedule() {
   const [movieSearch, setMovieSearch] = useState('');
   const [showMovieDropdown, setShowMovieDropdown] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState([]); // array of { field?, message }
 
   // Extract movieId from URL query params if user came from MovieList
   const queryParams = new URLSearchParams(location.search);
@@ -21,9 +21,10 @@ export default function CreateSchedule() {
 
   const [formData, setFormData] = useState({
     movieId: initialMovieId,
-    hallId: 'Hall-A', // Default value
+    hallId: 'Hall-A',
     date: '',
     time: '',
+    endTime: '',
     price: '',
     availableSeats: '',
     status: 'ACTIVE'
@@ -45,6 +46,7 @@ export default function CreateSchedule() {
             hallId: schedule.hallId,
             date: schedule.date,
             time: schedule.time,
+            endTime: schedule.endTime || '',
             price: schedule.price.toString(),
             availableSeats: schedule.availableSeats.toString(),
             status: schedule.status
@@ -73,7 +75,14 @@ export default function CreateSchedule() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setErrors([]);
+
+    // Client-side endTime validation
+    if (formData.time && formData.endTime && formData.endTime <= formData.time) {
+      setErrors([{ message: 'End time must be after start time.' }]);
+      setLoading(false);
+      return;
+    }
 
     try {
       const payload = {
@@ -90,7 +99,19 @@ export default function CreateSchedule() {
       navigate('/admin/schedules');
     } catch (err) {
       console.error('Error saving schedule:', err);
-      setError(err.response?.data?.message || `Failed to ${isEditMode ? 'update' : 'create'} schedule.`);
+      const data = err.response?.data;
+      if (data && typeof data === 'object') {
+        // 409 conflict: { error: "Hall..." }
+        if (data.error) {
+          setErrors([{ type: 'conflict', message: data.error }]);
+        } else {
+          // 400 validation: { field: "message", ... }
+          const msgs = Object.entries(data).map(([field, msg]) => ({ field, message: msg }));
+          setErrors(msgs.length ? msgs : [{ message: `Failed to ${isEditMode ? 'update' : 'create'} schedule.` }]);
+        }
+      } else {
+        setErrors([{ message: `Failed to ${isEditMode ? 'update' : 'create'} schedule.` }]);
+      }
     } finally {
       setLoading(false);
     }
@@ -100,8 +121,22 @@ export default function CreateSchedule() {
     <div className="container animate-fade-in movie-form-container">
       <div className="card form-card">
         <h1 className="form-card-title">{isEditMode ? 'Edit Movie Schedule' : 'Create Movie Schedule'}</h1>
-        
-        {error && <div className="error-message">{error}</div>}
+
+        {errors.length > 0 && (
+          <div
+            className={`alert-banner ${errors.some(e => e.type === 'conflict') ? 'alert-banner--conflict' : 'alert-banner--error'}`}
+            role="alert"
+          >
+            <strong>{errors.some(e => e.type === 'conflict') ? '⚠️ Scheduling Conflict' : '❌ Validation Errors'}</strong>
+            <ul style={{ margin: '6px 0 0', paddingLeft: '1.2rem' }}>
+              {errors.map((e, i) => (
+                <li key={i}>
+                  {e.field ? <strong>{e.field}: </strong> : null}{e.message}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit}>
           <div className="grid md:grid-cols-2">
@@ -179,12 +214,24 @@ export default function CreateSchedule() {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Time *</label>
+              <label className="form-label">Start Time *</label>
               <input
                 type="time"
                 name="time"
                 className="form-input"
                 value={formData.time}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">End Time *</label>
+              <input
+                type="time"
+                name="endTime"
+                className="form-input"
+                value={formData.endTime}
                 onChange={handleChange}
                 required
               />

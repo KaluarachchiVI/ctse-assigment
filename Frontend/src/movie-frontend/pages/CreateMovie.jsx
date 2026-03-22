@@ -9,7 +9,7 @@ export default function CreateMovie() {
   const isEditMode = !!id;
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState([]); // array of { field?, message }
   
   // TMDB Search State
   const [tmdbQuery, setTmdbQuery] = useState('');
@@ -41,7 +41,7 @@ export default function CreateMovie() {
       setTmdbResults(results);
     } catch (err) {
       console.error('TMDB Search Error:', err);
-      setError('Failed to search TMDB. Check your API key.');
+      setErrors([{ message: 'Failed to search TMDB. Check your API key.' }]);
     } finally {
       setIsSearching(false);
     }
@@ -56,7 +56,7 @@ export default function CreateMovie() {
           setFormData(response.data);
         } catch (err) {
           console.error('Fetch error:', err);
-          setError('Failed to load movie details for editing.');
+          setErrors([{ message: 'Failed to load movie details for editing.' }]);
         } finally {
           setLoading(false);
         }
@@ -101,7 +101,7 @@ export default function CreateMovie() {
       });
     } catch (err) {
       console.error('TMDB Detail Error:', err);
-      setError('Failed to fetch movie details from TMDB.');
+      setErrors([{ message: 'Failed to fetch movie details from TMDB.' }]);
     } finally {
       setLoading(false);
     }
@@ -118,7 +118,7 @@ export default function CreateMovie() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setErrors([]);
 
     try {
       const payload = {
@@ -135,7 +135,13 @@ export default function CreateMovie() {
       navigate('/admin/movies');
     } catch (err) {
       console.error('Error saving movie:', err);
-      setError(err.response?.data?.message || `Failed to ${isEditMode ? 'update' : 'create'} movie.`);
+      const data = err.response?.data;
+      if (data && typeof data === 'object') {
+        const msgs = Object.entries(data).map(([field, msg]) => ({ field, message: msg }));
+        setErrors(msgs.length ? msgs : [{ message: `Failed to ${isEditMode ? 'update' : 'create'} movie.` }]);
+      } else {
+        setErrors([{ message: `Failed to ${isEditMode ? 'update' : 'create'} movie.` }]);
+      }
     } finally {
       setLoading(false);
     }
@@ -145,8 +151,19 @@ export default function CreateMovie() {
     <div className="container animate-fade-in movie-form-container">
       <div className="card form-card">
         <h1 className="form-card-title">{isEditMode ? 'Edit Movie' : 'Add New Movie'}</h1>
-        
-        {error && <div className="error-message">{error}</div>}
+
+        {errors.length > 0 && (
+          <div className="alert-banner alert-banner--error" role="alert">
+            <strong>❌ Validation Errors</strong>
+            <ul style={{ margin: '6px 0 0', paddingLeft: '1.2rem' }}>
+              {errors.map((e, i) => (
+                <li key={i}>
+                  {e.field ? <strong>{e.field}: </strong> : null}{e.message}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         <div className="tmdb-search-section mb-8">
           <label className="form-label">Search TMDB to Auto-Fill</label>

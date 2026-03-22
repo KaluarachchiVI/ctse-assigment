@@ -9,6 +9,7 @@ export default function ManageMovies() {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [deleteError, setDeleteError] = useState('');
   const navigate = useNavigate();
 
   const fetchMovies = async () => {
@@ -29,12 +30,13 @@ export default function ManageMovies() {
 
   const handleDelete = async (id, title) => {
     if (window.confirm(`Are you sure you want to delete "${title}"?`)) {
+      setDeleteError('');
       try {
         await axios.delete(`http://localhost:8087/movies/${id}`);
         setMovies(movies.filter(m => m.id !== id));
       } catch (err) {
         console.error('Delete error', err);
-        alert('Failed to delete movie.');
+        setDeleteError(`Failed to delete "${title}". Please try again.`);
       }
     }
   };
@@ -50,6 +52,12 @@ export default function ManageMovies() {
           + Add New Movie
         </Link>
       </div>
+
+      {deleteError && (
+        <div className="alert-banner alert-banner--error" role="alert">
+          ❌ {deleteError}
+        </div>
+      )}
 
       {movies.length === 0 ? (
         <p>No movies found. Add one to get started!</p>

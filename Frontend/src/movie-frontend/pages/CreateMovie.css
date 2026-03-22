@@ -41,6 +41,36 @@
   border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
+/* Structured alert banners (used for 400/409 errors) */
+.alert-banner {
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.alert-banner--error {
+  background-color: rgba(239, 68, 68, 0.08);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.alert-banner--conflict {
+  background-color: rgba(251, 191, 36, 0.08);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.30);
+}
+
+.alert-banner ul {
+  list-style: disc;
+}
+
+.alert-banner li {
+  margin-bottom: 0.2rem;
+}
+
+
 .form-actions {
   margin-top: 2rem;
   display: flex;
