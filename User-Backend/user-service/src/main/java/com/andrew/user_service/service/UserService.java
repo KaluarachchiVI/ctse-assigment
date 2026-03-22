@@ -54,6 +54,7 @@ public class UserService {
         }
 
         user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
+        user.setRole("USER"); // All new registrations are 'USER' by default
         user.setCreatedAt(LocalDateTime.now());
         return userRepository.save(user);
     }

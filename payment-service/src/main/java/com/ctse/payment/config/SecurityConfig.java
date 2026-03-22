@@ -1,5 +1,6 @@
 package com.ctse.payment.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,33 +15,35 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     @Value("${management.endpoints.web.base-path:/actuator}")
     private String actuatorBasePath;
+
+    private final JwtAuthenticationFilter jwtAuthFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // CORS is handled only by api-gateway (8087). Adding CORS here duplicates
-                // Access-Control-Allow-Origin when the browser uses the gateway and breaks fetch().
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(actuatorBasePath + "/health").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/payments/webhook/stripe").permitAll()
-                        // Browser-initiated Stripe checkout + finalize (no Basic auth).
-                        .requestMatchers(HttpMethod.POST, "/payments").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/payments/checkout-session").authenticated()
-                        .requestMatchers("/payments/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/payments").permitAll() // Allow creating payments anonymously (booking-service call)
+                        .requestMatchers(HttpMethod.POST, "/payments/checkout-session").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/payments/**").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()
                 )
-                .httpBasic(Customizer.withDefaults());
+                .httpBasic(Customizer.withDefaults())
+                .addFilterBefore(jwtAuthFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

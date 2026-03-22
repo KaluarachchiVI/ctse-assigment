@@ -63,18 +63,33 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtDecoder jwtDecoder) throws Exception {
         http.securityMatcher(new NegatedRequestMatcher(new AntPathRequestMatcher("/booking/public/**")))
                 .csrf(csrf -> csrf.disable())
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(j -> j.decoder(jwtDecoder)))
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(j -> j
+                        .decoder(jwtDecoder)
+                        .jwtAuthenticationConverter(jwtAuthenticationConverter())
+                ))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/booking").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/booking/me").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/booking").hasRole("BOOKING_ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/booking/**").hasRole("BOOKING_ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/bookings/**").hasRole("BOOKING_ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/booking/*/ticket").hasRole("BOOKING_ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/booking/me").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/booking").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/booking/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/bookings/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/booking/*/ticket").hasRole("ADMIN")
                         .anyRequest().denyAll())
                 .httpBasic(Customizer.withDefaults());
         return http.build();
+    }
+
+    private org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter jwtAuthenticationConverter() {
+        org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter authoritiesConverter =
+                new org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter();
+        authoritiesConverter.setAuthorityPrefix("ROLE_");
+        authoritiesConverter.setAuthoritiesClaimName("role");
+
+        org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter converter =
+                new org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter();
+        converter.setJwtGrantedAuthoritiesConverter(authoritiesConverter);
+        return converter;
     }
 
     @Bean

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import AuthService from '../../user-frontend/services/AuthService';
 import { ADMIN_USERNAME, ADMIN_PASSWORD } from '../../lib/adminAuth';
 import './AdminLogin.css';
 
@@ -9,20 +10,25 @@ export default function AdminLogin() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     setError(null);
-    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-      localStorage.setItem('adminAuth', '1');
-      navigate('/admin');
-      return;
+    try {
+      const data = await AuthService.login(username, password);
+      if (localStorage.getItem('role') === 'ADMIN') {
+        navigate('/admin');
+      } else {
+        AuthService.logout();
+        setError('You do not have administrative privileges.');
+      }
+    } catch (err) {
+      setError('Invalid admin credentials or server error.');
     }
-    setError('Invalid admin credentials.');
   };
 
   return (
     <div className="admin-login-page">
-      <h1>Admin login</h1>
+      <h1>Admin Login</h1>
       <p className="admin-login-hint">
         This screen is not linked from the main site — open{' '}
         <code>/admin/login</code> directly (e.g. <code>http://localhost:5173/admin/login</code>).

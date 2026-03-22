@@ -29,11 +29,7 @@ function Navbar() {
   const isAdmin = isAdminSession();
 
   const handleLogout = () => {
-    if (isAdmin) {
-      logoutAdmin();
-    } else {
-      AuthService.logout();
-    }
+    AuthService.logout();
     navigate('/');
   };
 

@@ -44,6 +44,7 @@ public class JwtUtils {
     public String generateToken(Usermodel user) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("email", user.getEmail());
+        claims.put("role", user.getRole());
         return Jwts
                 .builder()
                 .setClaims(claims)

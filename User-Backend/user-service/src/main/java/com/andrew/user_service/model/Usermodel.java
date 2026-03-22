@@ -27,6 +27,8 @@ public class Usermodel {
 
     private String phone;
 
+    private String role;
+
     private LocalDateTime createdAt;
 
     // Explicit getters/setters in case Lombok has issues in this environment
@@ -40,6 +42,8 @@ public class Usermodel {
     public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }

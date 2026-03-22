@@ -66,6 +66,7 @@ services:
     environment:
       - SERVER_PORT=8083
       - SPRING_DATA_MONGODB_URI=mongodb+srv://yuvidu:yuvidu@cluster1.kt7i4.mongodb.net/microservice?retryWrites=true&w=majority&appName=Cluster1
+      - JWT_SECRET=404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
 
   scheduling-service:
     build:
@@ -75,3 +76,4 @@ services:
     environment:
       - SERVER_PORT=8084
       - SPRING_DATA_MONGODB_URI=mongodb+srv://yuvidu:yuvidu@cluster1.kt7i4.mongodb.net/microservice?retryWrites=true&w=majority&appName=Cluster1
+      - JWT_SECRET=404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970

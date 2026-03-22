@@ -12,9 +12,13 @@ export function basicAuthHeader() {
 }
 
 export function isAdminSession() {
-  return localStorage.getItem('adminAuth') === '1';
+  return localStorage.getItem('role') === 'ADMIN';
 }
 
 export function logoutAdmin() {
-  localStorage.removeItem('adminAuth');
+  localStorage.removeItem('token');
+  localStorage.removeItem('userId');
+  localStorage.removeItem('role');
+  localStorage.removeItem('email');
+  localStorage.removeItem('name');
 }
