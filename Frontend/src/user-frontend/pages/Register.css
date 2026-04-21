@@ -1,0 +1,11 @@
+/* Using shared auth-page layout from Login.css */
+@import './Login.css';
+
+/* Register-specific adjustments if any */
+.auth-container {
+    max-width: 500px; /* Slightly wider for the two-column row */
+}
+
+.grid {
+    gap: 1rem;
+}

@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+
+# Next.js (app may live under app/)
+.next/
+out/
+
+# Build / tooling
+dist/
+build/
+.turbo/
+.cache/
+*.tsbuildinfo
+
+# Env (keep examples)
+.env*
+!.env.example
+
+# Debug / coverage
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+coverage/
+.nyc_output/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db

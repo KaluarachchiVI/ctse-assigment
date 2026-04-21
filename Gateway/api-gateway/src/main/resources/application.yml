@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: user-service
+          uri: ${USER_SERVICE_URL:https://user-service-app.mangohill-a3908265.southeastasia.azurecontainerapps.io}
+          predicates:
+            - Path=/users/**
+        - id: booking-service
+          uri: ${BOOKING_SERVICE_URL:https://booking-service-app.mangohill-a3908265.southeastasia.azurecontainerapps.io}
+          predicates:
+            - Path=/booking/**
+        - id: payment-service
+          uri: ${PAYMENT_SERVICE_URL:https://payment-service-app.mangohill-a3908265.southeastasia.azurecontainerapps.io}
+          predicates:
+            - Path=/payments/**
+        - id: movie-service
+          uri: ${MOVIE_SERVICE_URL:https://movie-service-app.mangohill-a3908265.southeastasia.azurecontainerapps.io}
+          predicates:
+            - Path=/movies/**
+        - id: scheduling-service
+          uri: ${SCHEDULING_SERVICE_URL:https://scheduling-service-app.mangohill-a3908265.southeastasia.azurecontainerapps.io}
+          predicates:
+            - Path=/schedules/**
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns:
+              - "http://localhost:*"
+              - "https://*.netlify.app"
+              - "https://mangohill-*.azurecontainerapps.io"
+            allowedMethods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+            - OPTIONS
+            allowedHeaders: "*"
+
+server:
+  port: 8087
+
+logging:
+  level:
+    org.springframework.cloud.gateway: INFO
+    org.springframework.http.server.reactive: INFO
+    org.springframework.web.reactive: INFO

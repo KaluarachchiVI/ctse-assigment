@@ -1,0 +1,120 @@
+.seat-selection-root {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.seat-cat-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.seat-cat-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-muted, rgba(255, 255, 255, 0.75));
+}
+
+.seat-cat-price {
+  font-size: 0.85rem;
+  color: var(--color-accent, #d946ef);
+}
+
+.seat-cat-panel {
+  position: relative;
+  border-radius: 1rem;
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.12));
+  background: var(--surface-elevated, rgba(0, 0, 0, 0.35));
+  padding: 1rem 1.25rem;
+}
+
+.seat-screen-label {
+  text-align: center;
+  font-size: 0.65rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--text-muted, rgba(255, 255, 255, 0.45));
+  margin-bottom: 1rem;
+}
+
+.seat-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.seat-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+}
+
+.seat-row-id {
+  width: 1.75rem;
+  text-align: center;
+  font-size: 0.7rem;
+  color: var(--text-muted, rgba(255, 255, 255, 0.45));
+  margin-right: 0.25rem;
+}
+
+.seat-aisle-gap {
+  width: 1rem;
+  flex-shrink: 0;
+}
+
+@media (min-width: 640px) {
+  .seat-aisle-gap {
+    width: 1.5rem;
+  }
+}
+
+.seat-btn {
+  display: flex;
+  height: 2rem;
+  min-width: 2rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.35rem;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+}
+
+.seat-btn:hover:not(:disabled) {
+  border-color: rgba(217, 70, 239, 0.45);
+  background: rgba(217, 70, 239, 0.12);
+}
+
+.seat-btn.occupied {
+  cursor: not-allowed;
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.22);
+}
+
+.seat-btn.selected {
+  border-color: #d946ef;
+  background: rgba(217, 70, 239, 0.28);
+  color: #fff;
+  box-shadow: 0 0 12px rgba(217, 70, 239, 0.35);
+}
+
+@media (min-width: 640px) {
+  .seat-btn {
+    height: 2.25rem;
+    min-width: 2.25rem;
+    font-size: 0.75rem;
+  }
+}

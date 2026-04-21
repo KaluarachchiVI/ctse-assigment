@@ -1,0 +1,66 @@
+.payment-page {
+  max-width: 28rem;
+  margin: 0 auto;
+  padding: 1rem 0;
+}
+
+.payment-back {
+  display: inline-block;
+  margin-bottom: 1rem;
+  color: var(--text-muted, rgba(255, 255, 255, 0.65));
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.payment-back:hover {
+  color: var(--color-accent, #d946ef);
+}
+
+.payment-demo-note {
+  font-size: 0.85rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  background: rgba(251, 191, 36, 0.08);
+  color: rgba(254, 243, 199, 0.95);
+}
+
+.payment-meta {
+  margin-top: 1rem;
+  color: var(--text-muted, rgba(255, 255, 255, 0.6));
+  font-size: 0.9rem;
+}
+
+.payment-meta .mono {
+  font-family: ui-monospace, monospace;
+  color: var(--color-accent, #d946ef);
+}
+
+.payment-form {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.payment-form .form-group label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-muted, rgba(255, 255, 255, 0.65));
+  margin-bottom: 0.35rem;
+}
+
+.payment-form .form-group input {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.15));
+  background: rgba(255, 255, 255, 0.06);
+  color: inherit;
+}
+
+.payment-form .grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}

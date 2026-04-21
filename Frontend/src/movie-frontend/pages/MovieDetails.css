@@ -1,0 +1,494 @@
+.movie-details-page {
+  margin-top: -2rem; /* Pull up to meet navbar if needed */
+}
+
+.movie-hero-backdrop {
+  height: 600px;
+  background-size: cover;
+  background-position: center 20%;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: 4rem;
+  margin-bottom: 3rem;
+}
+
+.hero-container {
+  position: relative;
+  z-index: 2;
+}
+
+.back-btn {
+  position: absolute;
+  top: -2rem;
+  left: 0;
+  color: white;
+  text-decoration: none;
+  background: rgba(0,0,0,0.5);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.back-btn:hover {
+  background: var(--primary);
+}
+
+.movie-hero-content-wrapper {
+  display: flex;
+  gap: 3rem;
+  align-items: flex-end;
+}
+
+.movie-hero-poster-box {
+  width: 260px;
+  flex-shrink: 0;
+  position: relative;
+  transform: translateY(20px);
+}
+
+.hero-poster-img {
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+  border: 4px solid rgba(255,255,255,0.1);
+}
+
+.hero-rating {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(0,0,0,0.8);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-weight: 700;
+  color: #ffcc00;
+  backdrop-filter: blur(4px);
+}
+
+.hero-text-details {
+  flex: 1;
+}
+
+.hero-title {
+  font-size: 4rem;
+  font-weight: 800;
+  margin: 0.5rem 0;
+  line-height: 1;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+.hero-meta-row {
+  display: flex;
+  gap: 1.5rem;
+  color: rgba(255,255,255,0.8);
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+}
+
+.hero-description {
+  font-size: 1.125rem;
+  line-height: 1.6;
+  max-width: 800px;
+  color: rgba(255,255,255,0.9);
+  margin-bottom: 2rem;
+}
+
+.hero-credits {
+  display: flex;
+  gap: 3rem;
+}
+
+.credit-label {
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--primary);
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.credit-value {
+  font-weight: 600;
+  font-size: 1.125rem;
+}
+
+/* Main content below hero — centered, readable width */
+.movie-details-main {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  padding-bottom: 4rem;
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hero-tags .badge-primary {
+  background: rgba(217, 70, 239, 0.25);
+  color: #f0abfc;
+  border: 1px solid rgba(217, 70, 239, 0.45);
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 600;
+}
+
+.hero-tags .badge-outline {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(248, 250, 252, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.details-section {
+  margin-bottom: 3rem;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  padding-left: 1rem;
+  border-left: 4px solid var(--primary);
+}
+
+/* Cast Row Scroll */
+.cast-row-scroll {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+  scrollbar-width: thin;
+}
+
+.cast-card {
+  width: 140px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  transition: transform 0.2s;
+}
+
+.cast-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--primary);
+}
+
+.cast-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.cast-card-info {
+  padding: 0.75rem;
+}
+
+.cast-name {
+  font-weight: 700;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cast-char {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Media Gallery */
+.media-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.gallery-img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.gallery-img:hover {
+  opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+  .movie-hero-content-wrapper {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+  
+  .movie-hero-poster-box {
+    width: 160px;
+    margin: 0 auto;
+    transform: translateY(0);
+  }
+  
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  
+  .movie-hero-backdrop {
+    height: auto;
+    padding-top: 4rem;
+  }
+}
+
+/* —— Available showings —— */
+.schedules-view {
+  width: 100%;
+}
+
+/* Explicit readable text on dark surfaces (avoids low-contrast vars) */
+.schedules-panel {
+  --show-fg: #f1f5f9;
+  --show-fg-muted: #cbd5e1;
+  --show-fg-soft: #94a3b8;
+  --show-surface: #1e293b;
+  --show-card: #0f172a;
+  --show-border: rgba(148, 163, 184, 0.35);
+
+  background: var(--show-surface);
+  border: 1px solid var(--show-border);
+  border-radius: 16px;
+  padding: 1.5rem 1.5rem 1.75rem;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  color: var(--show-fg);
+}
+
+.schedules-section-header {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1.25rem;
+  margin-bottom: 1.75rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--show-border);
+}
+
+@media (min-width: 768px) {
+  .schedules-section-header {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+}
+
+.schedules-heading-block {
+  text-align: left;
+}
+
+.schedules-title {
+  margin: 0 0 0.35rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--show-fg);
+  border: none;
+  padding: 0;
+}
+
+.schedules-subtitle {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--show-fg-muted);
+}
+
+.schedule-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+  flex-shrink: 0;
+}
+
+.schedule-filter-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  /* Neutral label — keeps focus on content, not loud accent */
+  color: var(--show-fg-soft);
+}
+
+.schedule-date-input {
+  width: 100%;
+  max-width: 220px;
+  min-height: 44px;
+  color-scheme: dark;
+  background: var(--show-card);
+  color: #f8fafc;
+  border: 1px solid #64748b;
+  border-radius: 8px;
+}
+
+.schedule-date-input:focus {
+  outline: none;
+  border-color: #a855f7;
+  box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.25);
+}
+
+.schedule-date-input::placeholder {
+  color: var(--show-fg-soft);
+}
+
+/* Chromium date control segments — keep digits readable */
+.schedule-date-input::-webkit-datetime-edit-text,
+.schedule-date-input::-webkit-datetime-edit-month-field,
+.schedule-date-input::-webkit-datetime-edit-day-field,
+.schedule-date-input::-webkit-datetime-edit-year-field {
+  color: #f8fafc;
+}
+
+.schedule-date-input::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.75;
+  cursor: pointer;
+}
+
+@media (min-width: 768px) {
+  .schedule-date-input {
+    width: 220px;
+  }
+}
+
+.schedule-empty {
+  text-align: center;
+  padding: 2rem 1rem;
+  background: rgba(15, 23, 42, 0.85) !important;
+  border: 1px dashed var(--show-border);
+  color: var(--show-fg-muted);
+}
+
+.schedule-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+@media (min-width: 560px) {
+  .schedule-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 900px) {
+  .schedule-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.schedule-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.25rem;
+  border-radius: 12px;
+  background: var(--show-card);
+  border: 1px solid var(--show-border);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  color: var(--show-fg);
+}
+
+.schedule-card:hover {
+  border-color: rgba(217, 70, 239, 0.35);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.schedule-card-top {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.hall-name {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #f8fafc;
+  line-height: 1.2;
+}
+
+.schedule-date-pill {
+  flex-shrink: 0;
+  display: inline-block;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #f8fafc;
+  background: #334155;
+  border: 1px solid #64748b;
+  border-radius: 8px;
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+
+.schedule-time {
+  font-size: 1.35rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #f8fafc;
+  letter-spacing: 0.02em;
+}
+
+.schedule-card-footer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: auto;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.price-tag {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.price-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--show-fg-soft);
+}
+
+.price-amount {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+}
+
+.schedule-book-btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(217, 70, 239, 0.35);
+}
+
+/* Utility text inside panel — avoid global .text-muted too dim on slate */
+.schedules-panel .text-muted {
+  color: var(--show-fg-muted);
+}

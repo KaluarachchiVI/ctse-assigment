@@ -1,0 +1,50 @@
+.admin-dashboard-header .eyebrow {
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted, rgba(255, 255, 255, 0.55));
+  margin: 0;
+}
+
+.admin-dashboard-header h1 {
+  margin: 0.35rem 0 0;
+}
+
+.admin-dashboard-header .sub {
+  color: var(--text-muted, rgba(255, 255, 255, 0.65));
+  margin-top: 0.5rem;
+}
+
+.admin-dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.admin-tile {
+  display: block;
+  padding: 1.25rem;
+  border-radius: 1rem;
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.12));
+  background: var(--surface-elevated, rgba(0, 0, 0, 0.35));
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.admin-tile:hover {
+  border-color: rgba(217, 70, 239, 0.45);
+  box-shadow: 0 0 0 1px rgba(217, 70, 239, 0.2);
+}
+
+.admin-tile h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+}
+
+.admin-tile p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-muted, rgba(255, 255, 255, 0.6));
+}
