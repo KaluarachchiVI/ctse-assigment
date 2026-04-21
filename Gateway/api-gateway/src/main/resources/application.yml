@@ -31,9 +31,13 @@ spring:
       globalcors:
         cors-configurations:
           '[/**]':
-            # Permissive for demos (Vercel, Netlify, localhost, previews). Tighten for production if needed.
+            # Explicit patterns — some Spring/Gateway builds handle "*" poorly for preflight; redeploy gateway after changes.
             allowedOriginPatterns:
-              - "*"
+              - "http://localhost:*"
+              - "http://127.0.0.1:*"
+              - "https://*.vercel.app"
+              - "https://*.netlify.app"
+              - "https://mangohill-*.azurecontainerapps.io"
             allowedMethods:
             - GET
             - POST
