@@ -1,12 +1,12 @@
 server:
-  port: ${SERVER_PORT:8082}
+  port: ${SERVER_PORT:8085}
 
 spring:
   application:
     name: payment-service
   data:
     mongodb:
-      uri: ${MONGODB_URI:mongodb://localhost:27017/payments-db}
+      uri: ${MONGO_URI:mongodb+srv://yuvidu:yuvidu@cluster1.kt7i4.mongodb.net/microservice?retryWrites=true&w=majority&appName=Cluster1}
   mail:
     host: ${SMTP_HOST:localhost}
     port: ${SMTP_PORT:587}
@@ -27,7 +27,7 @@ management:
 
 booking:
   service:
-    base-url: ${BOOKING_SERVICE_BASE_URL:http://localhost:8080}
+    base-url: ${BOOKING_SERVICE_BASE_URL:http://localhost:8082}
 
 user:
   service:
