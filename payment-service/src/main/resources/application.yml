@@ -37,9 +37,9 @@ user:
 
 payment:
   gateway:
-    provider: ${PAYMENT_GATEWAY_PROVIDER:mock}
+    provider: ${PAYMENT_GATEWAY_PROVIDER:stripe-checkout}
     stripe:
-      api-key: ${STRIPE_API_KEY:dummy}
+      api-key: ${STRIPE_API_KEY:sk_test_51RgeLzGabNTWU4v4kFXBDMhxrtjcHZ1C1y9Vqlrjae4D7RoCPwGp826SVFUxZFLLjCme9xBOyzK37gLQivh0jPDt00wdhVrUXa}
       # ISO code (e.g. usd, lkr). Must be enabled for your Stripe account; `usd` avoids cross-currency minimum issues.
       checkout-currency: ${STRIPE_CHECKOUT_CURRENCY:usd}
 
