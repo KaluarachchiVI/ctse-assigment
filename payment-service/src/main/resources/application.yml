@@ -27,11 +27,11 @@ management:
 
 booking:
   service:
-    base-url: ${BOOKING_SERVICE_BASE_URL:http://localhost:8082}
+    base-url: ${BOOKING_SERVICE_BASE_URL:https://booking-service-late-2.mangohill-a3908265.southeastasia.azurecontainerapps.io}
 
 user:
   service:
-    base-url: ${USER_SERVICE_BASE_URL:http://localhost:8081}
+    base-url: ${USER_SERVICE_BASE_URL:https://user-service-app.mangohill-a3908265.southeastasia.azurecontainerapps.io}
     # When true, payment-service loads email/name from user-service for logged-in checkout.
     enabled: ${USER_SERVICE_ENABLED:true}
 
@@ -39,7 +39,7 @@ payment:
   gateway:
     provider: ${PAYMENT_GATEWAY_PROVIDER:stripe-checkout}
     stripe:
-      api-key: ${STRIPE_API_KEY:}
+      api-key: ${STRIPE_API_KEY:sk_test_51RgeLzGabNTWU4v4kFXBDMhxrtjcHZ1C1y9Vqlrjae4D7RoCPwGp826SVFUxZFLLjCme9xBOyzK37gLQivh0jPDt00wdhVrUXa}
       # ISO code (e.g. usd, lkr). Must be enabled for your Stripe account; `usd` avoids cross-currency minimum issues.
       checkout-currency: ${STRIPE_CHECKOUT_CURRENCY:usd}
 
