@@ -6,7 +6,7 @@ spring:
     name: payment-service
   data:
     mongodb:
-      uri: ${MONGO_URI:}
+      uri: ${MONGO_URI:mongodb+srv://yuvidu:yuvidu@cluster1.kt7i4.mongodb.net/microservice?retryWrites=true&w=majority&appName=Cluster1}
   mail:
     host: ${SMTP_HOST:smtp.gmail.com}
     port: ${SMTP_PORT:587}
