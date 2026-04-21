@@ -8,7 +8,15 @@ import java.util.List;
 
 public interface PaymentService {
 
-    PaymentResponse processPayment(PaymentRequest request);
+    default PaymentResponse processPayment(PaymentRequest request) {
+        return processPayment(request, null);
+    }
+
+    /**
+     * @param authorization the caller's raw {@code Authorization} header (may be null),
+     *                      forwarded to user-service when verifying a registered user.
+     */
+    PaymentResponse processPayment(PaymentRequest request, String authorization);
 
     PaymentResponse getPaymentById(String paymentId);
 

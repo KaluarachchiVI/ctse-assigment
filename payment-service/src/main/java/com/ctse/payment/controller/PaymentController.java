@@ -46,8 +46,11 @@ public class PaymentController {
 
     @PostMapping
     @Operation(summary = "Process payment for a booking")
-    public ResponseEntity<PaymentResponse> processPayment(@Valid @RequestBody PaymentRequest request) {
-        PaymentResponse response = paymentService.processPayment(request);
+    public ResponseEntity<PaymentResponse> processPayment(
+            @Valid @RequestBody PaymentRequest request,
+            @RequestHeader(value = "Authorization", required = false) String authorization
+    ) {
+        PaymentResponse response = paymentService.processPayment(request, authorization);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

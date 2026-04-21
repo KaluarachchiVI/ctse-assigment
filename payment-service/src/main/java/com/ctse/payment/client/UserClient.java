@@ -34,14 +34,25 @@ public class UserClient {
     private boolean userServiceEnabled;
 
     public boolean userExists(String userId) {
+        return userExists(userId, null);
+    }
+
+    /**
+     * Verify a user exists, forwarding the caller's {@code Authorization} header so the
+     * request satisfies user-service's role-based rules on {@code GET /users/{id}}.
+     */
+    public boolean userExists(String userId, String authorization) {
         if (!userServiceEnabled) {
             return true;
         }
         String url = userServiceBaseUrl + "/users/" + userId;
         try {
             URI uri = Objects.requireNonNull(URI.create(url));
-            RequestEntity<Void> request = RequestEntity.get(uri).build();
-            ResponseEntity<String> response = restTemplate.exchange(request, String.class);
+            RequestEntity.HeadersBuilder<?> builder = RequestEntity.get(uri);
+            if (authorization != null && !authorization.isBlank()) {
+                builder = builder.header("Authorization", authorization);
+            }
+            ResponseEntity<String> response = restTemplate.exchange(builder.build(), String.class);
             return response.getStatusCode().is2xxSuccessful();
         } catch (Exception ex) {
             log.error("Failed to verify user {}: {}", userId, ex.getMessage());
@@ -55,6 +66,10 @@ public class UserClient {
      * may not expose exact email/name field names.
      */
     public UserProfile fetchUserProfile(String userId) {
+        return fetchUserProfile(userId, null);
+    }
+
+    public UserProfile fetchUserProfile(String userId, String authorization) {
         if (!userServiceEnabled) {
             return new UserProfile(Optional.empty(), Optional.empty());
         }
@@ -62,9 +77,12 @@ public class UserClient {
         String url = userServiceBaseUrl + "/users/" + userId;
         try {
             URI uri = Objects.requireNonNull(URI.create(url));
-            RequestEntity<Void> request = RequestEntity.get(uri).build();
+            RequestEntity.HeadersBuilder<?> builder = RequestEntity.get(uri);
+            if (authorization != null && !authorization.isBlank()) {
+                builder = builder.header("Authorization", authorization);
+            }
             ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
-                    request,
+                    builder.build(),
                     new ParameterizedTypeReference<Map<String, Object>>() {}
             );
 

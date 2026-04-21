@@ -47,7 +47,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     @Transactional
-    public PaymentResponse processPayment(PaymentRequest request) {
+    public PaymentResponse processPayment(PaymentRequest request, String authorization) {
         // Stripe success flow:
         // If stripeCheckoutSessionId is provided, treat this as a server-side finalization request.
         if (!isBlank(request.getStripeCheckoutSessionId())) {
@@ -57,7 +57,7 @@ public class PaymentServiceImpl implements PaymentService {
         // Stripe initiation flow:
         // If configured, create a Stripe Checkout Session and return the checkoutUrl for redirect.
         if (shouldUseStripeCheckout()) {
-            return initiateStripeCheckout(request);
+            return initiateStripeCheckout(request, authorization);
         }
 
         // Default assignment flow (mock gateway): create PENDING payment and charge immediately.
@@ -76,11 +76,13 @@ public class PaymentServiceImpl implements PaymentService {
             doTicketing = true;
         } else {
             // Registered checkout: verify user exists (and attempt to auto-fill ticket fields).
-            if (!userClient.userExists(request.getUserId())) {
+            // Forward the caller's Authorization header so user-service's role-protected
+            // GET /users/{id} accepts the request.
+            if (!userClient.userExists(request.getUserId(), authorization)) {
                 throw new IllegalArgumentException("User not found: " + request.getUserId());
             }
 
-            UserClient.UserProfile profile = userClient.fetchUserProfile(request.getUserId());
+            UserClient.UserProfile profile = userClient.fetchUserProfile(request.getUserId(), authorization);
             ticketEmail = profile.getEmail().orElse(request.getTicketEmail());
             guestName = profile.getName().orElse(request.getGuestName());
 
@@ -159,7 +161,7 @@ public class PaymentServiceImpl implements PaymentService {
         return normalized.equals("stripe-checkout") || normalized.equals("stripe") || normalized.startsWith("stripe");
     }
 
-    private PaymentResponse initiateStripeCheckout(PaymentRequest request) {
+    private PaymentResponse initiateStripeCheckout(PaymentRequest request, String authorization) {
         String ticketEmail;
         String guestName;
         boolean hasUserId = request.getUserId() != null && !request.getUserId().isBlank();
@@ -174,11 +176,11 @@ public class PaymentServiceImpl implements PaymentService {
             ticketEmail = request.getTicketEmail();
             guestName = request.getGuestName();
         } else {
-            if (!userClient.userExists(request.getUserId())) {
+            if (!userClient.userExists(request.getUserId(), authorization)) {
                 throw new IllegalArgumentException("User not found: " + request.getUserId());
             }
 
-            UserClient.UserProfile profile = userClient.fetchUserProfile(request.getUserId());
+            UserClient.UserProfile profile = userClient.fetchUserProfile(request.getUserId(), authorization);
             ticketEmail = profile.getEmail().orElse(request.getTicketEmail());
             guestName = profile.getName().orElse(request.getGuestName());
         }
