@@ -6,12 +6,12 @@ spring:
     name: payment-service
   data:
     mongodb:
-      uri: ${MONGO_URI:mongodb+srv://yuvidu:yuvidu@cluster1.kt7i4.mongodb.net/microservice?retryWrites=true&w=majority&appName=Cluster1}
+      uri: ${MONGO_URI:}
   mail:
     host: ${SMTP_HOST:smtp.gmail.com}
     port: ${SMTP_PORT:587}
-    username: ${SMTP_USERNAME:vihanduk@gmail.com}
-    password: ${SMTP_PASSWORD:jzjifebosldgmbbv}
+    username: ${SMTP_USERNAME:}
+    password: ${SMTP_PASSWORD:}
     properties:
       mail:
         smtp:
@@ -39,7 +39,7 @@ payment:
   gateway:
     provider: ${PAYMENT_GATEWAY_PROVIDER:stripe-checkout}
     stripe:
-      api-key: ${STRIPE_API_KEY:sk_test_51RgeLzGabNTWU4v4kFXBDMhxrtjcHZ1C1y9Vqlrjae4D7RoCPwGp826SVFUxZFLLjCme9xBOyzK37gLQivh0jPDt00wdhVrUXa}
+      api-key: ${STRIPE_API_KEY:}
       # ISO code (e.g. usd, lkr). Must be enabled for your Stripe account; `usd` avoids cross-currency minimum issues.
       checkout-currency: ${STRIPE_CHECKOUT_CURRENCY:usd}
 

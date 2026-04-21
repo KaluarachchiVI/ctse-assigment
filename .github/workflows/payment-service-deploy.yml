@@ -1,0 +1,57 @@
+name: Deploy Payment Service to Azure Container Apps
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "payment-service/**"
+      - ".github/workflows/payment-service-deploy.yml"
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    env:
+      ACR_LOGIN_SERVER: bookingacrsliitproject.azurecr.io
+      IMAGE_NAME: payment-service
+      CONTAINER_APP_NAME: payment-new-new-2
+      RESOURCE_GROUP: booking-rg
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set image tag
+        run: echo "IMAGE_TAG=${GITHUB_SHA::7}" >> "$GITHUB_ENV"
+
+      - name: Docker login to ACR
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ env.ACR_LOGIN_SERVER }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Build and push image
+        run: |
+          docker build -t $ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG -t $ACR_LOGIN_SERVER/$IMAGE_NAME:latest payment-service
+          docker push $ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG
+          docker push $ACR_LOGIN_SERVER/$IMAGE_NAME:latest
+
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Azure CLI setup
+        uses: azure/CLI@v2
+        with:
+          inlineScript: az extension add --name containerapp --upgrade
+
+      - name: Update container app image
+        uses: azure/CLI@v2
+        with:
+          inlineScript: |
+            az containerapp update \
+              --name "$CONTAINER_APP_NAME" \
+              --resource-group "$RESOURCE_GROUP" \
+              --image "$ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG"

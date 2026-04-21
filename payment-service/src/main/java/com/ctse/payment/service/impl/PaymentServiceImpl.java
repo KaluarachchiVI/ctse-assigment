@@ -2,6 +2,7 @@ package com.ctse.payment.service.impl;
 
 import com.ctse.payment.client.BookingClient;
 import com.ctse.payment.client.UserClient;
+import com.ctse.payment.client.UserClient.UserCheckResult;
 import com.ctse.payment.dto.PaymentRequest;
 import com.ctse.payment.dto.PaymentResponse;
 import com.ctse.payment.dto.StripeCheckoutSessionRequest;
@@ -78,9 +79,8 @@ public class PaymentServiceImpl implements PaymentService {
             // Registered checkout: verify user exists (and attempt to auto-fill ticket fields).
             // Forward the caller's Authorization header so user-service's role-protected
             // GET /users/{id} accepts the request.
-            if (!userClient.userExists(request.getUserId(), authorization)) {
-                throw new IllegalArgumentException("User not found: " + request.getUserId());
-            }
+            UserCheckResult check = userClient.userExists(request.getUserId(), authorization);
+            handleUserCheckResult(check, request.getUserId());
 
             UserClient.UserProfile profile = userClient.fetchUserProfile(request.getUserId(), authorization);
             ticketEmail = profile.getEmail().orElse(request.getTicketEmail());
@@ -176,9 +176,8 @@ public class PaymentServiceImpl implements PaymentService {
             ticketEmail = request.getTicketEmail();
             guestName = request.getGuestName();
         } else {
-            if (!userClient.userExists(request.getUserId(), authorization)) {
-                throw new IllegalArgumentException("User not found: " + request.getUserId());
-            }
+            UserCheckResult check = userClient.userExists(request.getUserId(), authorization);
+            handleUserCheckResult(check, request.getUserId());
 
             UserClient.UserProfile profile = userClient.fetchUserProfile(request.getUserId(), authorization);
             ticketEmail = profile.getEmail().orElse(request.getTicketEmail());
@@ -324,6 +323,22 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         return response;
+    }
+
+    private void handleUserCheckResult(UserCheckResult check, String userId) {
+        switch (check) {
+            case EXISTS, DISABLED -> {
+                // Proceed for confirmed users, or when user-service checks are intentionally disabled.
+            }
+            case NOT_FOUND -> throw new IllegalArgumentException("User not found: " + userId);
+            case UNAUTHORIZED -> throw new IllegalArgumentException(
+                    "User verification rejected by user-service (401/403). Confirm JWT_SECRET matches user-service and that the Bearer token is present."
+            );
+            case UPSTREAM_ERROR -> throw new IllegalStateException(
+                    "user-service unreachable while verifying userId=" + userId + ". Check USER_SERVICE_BASE_URL."
+            );
+            default -> throw new IllegalStateException("Unexpected user verification result: " + check);
+        }
     }
 
     @Override

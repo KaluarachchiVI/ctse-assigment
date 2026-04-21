@@ -4,10 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
@@ -33,7 +36,15 @@ public class UserClient {
     @Value("${user.service.enabled:false}")
     private boolean userServiceEnabled;
 
-    public boolean userExists(String userId) {
+    public enum UserCheckResult {
+        EXISTS,
+        NOT_FOUND,
+        UNAUTHORIZED,
+        UPSTREAM_ERROR,
+        DISABLED
+    }
+
+    public UserCheckResult userExists(String userId) {
         return userExists(userId, null);
     }
 
@@ -41,9 +52,9 @@ public class UserClient {
      * Verify a user exists, forwarding the caller's {@code Authorization} header so the
      * request satisfies user-service's role-based rules on {@code GET /users/{id}}.
      */
-    public boolean userExists(String userId, String authorization) {
+    public UserCheckResult userExists(String userId, String authorization) {
         if (!userServiceEnabled) {
-            return true;
+            return UserCheckResult.DISABLED;
         }
         String url = userServiceBaseUrl + "/users/" + userId;
         try {
@@ -53,11 +64,37 @@ public class UserClient {
                 builder = builder.header("Authorization", authorization);
             }
             ResponseEntity<String> response = restTemplate.exchange(builder.build(), String.class);
-            return response.getStatusCode().is2xxSuccessful();
+            return response.getStatusCode().is2xxSuccessful()
+                    ? UserCheckResult.EXISTS
+                    : mapStatus(response.getStatusCode(), userId, url, authorization != null && !authorization.isBlank());
+        } catch (HttpStatusCodeException ex) {
+            return mapStatus(ex.getStatusCode(), userId, url, authorization != null && !authorization.isBlank());
+        } catch (ResourceAccessException ex) {
+            log.warn("User lookup upstream error for userId={} url={} bearerForwarded={} detail={}",
+                    userId, url, authorization != null && !authorization.isBlank(), ex.getMessage());
+            return UserCheckResult.UPSTREAM_ERROR;
         } catch (Exception ex) {
-            log.error("Failed to verify user {}: {}", userId, ex.getMessage());
-            return false;
+            log.warn("Unexpected user lookup failure for userId={} url={} bearerForwarded={} detail={}",
+                    userId, url, authorization != null && !authorization.isBlank(), ex.getMessage());
+            return UserCheckResult.UPSTREAM_ERROR;
         }
+    }
+
+    private UserCheckResult mapStatus(HttpStatusCode statusCode, String userId, String url, boolean bearerForwarded) {
+        int status = statusCode.value();
+        UserCheckResult result;
+        if (status >= 200 && status < 300) {
+            result = UserCheckResult.EXISTS;
+        } else if (status == 404) {
+            result = UserCheckResult.NOT_FOUND;
+        } else if (status == 401 || status == 403) {
+            result = UserCheckResult.UNAUTHORIZED;
+        } else {
+            result = UserCheckResult.UPSTREAM_ERROR;
+        }
+        log.warn("User lookup returned status={} mapped={} userId={} url={} bearerForwarded={}",
+                status, result, userId, url, bearerForwarded);
+        return result;
     }
 
     /**
